@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_gravity="center|top"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#00FFFFFF">
+
+    <LinearLayout
+        android:background="#00FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:background="#00FFFFFF"
+            android:id="@+id/titleText"
+            android:src="@mipmap/ic_launcher"
+            android:layout_height="100dp"
+            android:layout_width="100dp"/>
+
+        <Button
+            android:visibility="visible"
+            android:id="@+id/window_close"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Remove" />
+    </LinearLayout>
+</RelativeLayout>
