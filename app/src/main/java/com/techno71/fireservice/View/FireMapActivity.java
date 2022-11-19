@@ -547,17 +547,16 @@ public class FireMapActivity extends FragmentActivity implements
     @SuppressLint("DefaultLocale")
     private void getLocationMap() {
 
-        if (myLocationLat == null) {
+        if (myLocationLat != null) {
+            if (userLocationLat != null) {
 
-        } else {
-
-            if (userLocationLat == null) {
-
-            } else {
                 distance = SphericalUtil.computeDistanceBetween(myLocationLat, userLocationLat);
 
                 if (isActivityStart) {
                     isActivityStart = false;
+                   /* mMap.addMarker(new MarkerOptions().position(myLocationLat).title("Current Location")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));*/
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocationLat));
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
                 }
@@ -714,12 +713,11 @@ public class FireMapActivity extends FragmentActivity implements
 
                 if (sharedPreferences_type.getString("img", null) == null) {
                     markerOptions1.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                    positionMarker = mMap.addMarker(markerOptions1);
                 } else {
                     markerOptions1.icon(BitmapDescriptorFactory.fromBitmap(getBitmapFromLayout(R.layout.map_gif_load, "" + sharedPreferences_type.getString("img", null), 0)));
-                    positionMarker = mMap.addMarker(markerOptions1);
 
                 }
+                positionMarker = mMap.addMarker(markerOptions1);
 
                 GoogleDirection.withServerKey(getResources().getString(R.string.google_map_key))
                         .from(myLocationLat)
@@ -728,6 +726,7 @@ public class FireMapActivity extends FragmentActivity implements
                         .transportMode(TransportMode.WALKING)
                         //.alternativeRoute(true)
                         .execute(this);
+
 
             }
         }
@@ -824,7 +823,33 @@ public class FireMapActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
+        /*LatLng latLng_curent = new LatLng(location.getLatitude(), location.getLongitude());
 
+        sharedPreferences_type.edit().putString("myLatitud", String.valueOf(location.getLatitude())).commit();
+        sharedPreferences_type.edit().putString("myLongitude", String.valueOf(location.getLongitude())).commit();
+        mMap.addMarker(new MarkerOptions().position(latLng_curent).title("Current Location")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));*/
+       /* try {
+
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng_curent);
+            markerOptions.title("Current Location");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+
+            mMap.addMarker(markerOptions);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng_curent, 18));
+        } catch (Exception exception) {
+
+            Toast.makeText(getApplicationContext(), "error:" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+        }*/
+
+       /* if (client != null) {
+
+            LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
+        }*/
+
+       /* UpdateLocation(location.getLatitude(), location.getLongitude());
+        ShowStorage(location.getLatitude(), location.getLongitude());*/
     }
 
     private void getLocation() {
@@ -846,25 +871,11 @@ public class FireMapActivity extends FragmentActivity implements
                 PackageManager.PERMISSION_GRANTED) {
 
             // Asking user if explanation is needed
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{
-                                Manifest.permission.ACCESS_FINE_LOCATION
-                        },
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-
-
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{
-                                Manifest.permission.ACCESS_FINE_LOCATION
-                        },
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                    },
+                    MY_PERMISSIONS_REQUEST_LOCATION);
         } else {
             getLocation();
 

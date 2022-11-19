@@ -38,6 +38,7 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -887,8 +888,34 @@ public class UserMapsActivity extends AppCompatActivity implements
                         }
                         location_wishStorageController = new Location_wishStorageController(locationWithStorageShowList, UserMapsActivity.this);
                         recyclerView_locationStorag.setAdapter(location_wishStorageController);
-                        location_wishStorageController.notifyDataSetChanged();
+                        //location_wishStorageController.notifyDataSetChanged();
 
+                        Button submitButton = view1.findViewById(R.id.submit_btn);
+                        EditText floorEt= view1.findViewById(R.id.floor_edittext);
+                        Spinner colorSpinner = view1.findViewById(R.id.color_spiner);
+                        EditText commentEt = view1.findViewById(R.id.comment_edittext);
+                        submitButton.setOnClickListener(view2 -> {
+                            String floor = floorEt.getText().toString();
+                            String color = colorSpinner.getSelectedItem().toString();
+                            String comment = commentEt.getText().toString();
+                            if (TextUtils.isEmpty(floor)){
+                                floorEt.setError("Enter a valid floor...");
+                            }else if (color.equals("Select color…")){
+                                Toast.makeText(UserMapsActivity.this, "Select a color...", Toast.LENGTH_SHORT).show();
+                            }else if (TextUtils.isEmpty(comment)){
+                                commentEt.setError("Enter a comment...");
+                            }else{
+                                String id = "-001";
+                                for (LocationWithStorageShow item: locationWithStorageShowList){
+                                    if (floor.equalsIgnoreCase(item.getFloor())){
+                                        id = item.getId();
+                                    }
+                                }
+                                if (id.equals("-001"))
+                                    floorEt.setError("Enter a valid floor...");
+                                else addComment(id, comment, color);
+                            }
+                        });
                         bottomSheetDialog.show();
                     } else {
                         Toast.makeText(UserMapsActivity.this, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
@@ -1421,7 +1448,51 @@ public class UserMapsActivity extends AppCompatActivity implements
         error.printStackTrace();
 
     }
-    
+    private void addComment(String id, String comment, String color) {
+        SharedPreferences sp=context.getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
+        String accessTocken= sp.getString("access_token","access_token found");
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, storage_add, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONObject jsonObjectMain=new JSONObject(response);
+
+                    if(jsonObjectMain.getString("message").contains("Comment Successfully!")){
+                        //bottomSheetDialog.dismiss();
+                        Toast.makeText(context, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
+                    }else{
+
+                        Toast.makeText(context, "error:"+jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                netWorkError(error);
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+
+                Map<String, String> hashMap = new HashMap<String, String>();
+                hashMap.put("security_error","tec71");
+                hashMap.put("store_id",id);
+                hashMap.put("axcess_token",accessTocken);
+                hashMap.put("comment",comment);
+                hashMap.put("alert_tag",color);
+                hashMap.put("title", "title");
+                return hashMap;
+            }
+        };
+
+        RequestQueue requestQueue= Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+    }
     
 }
 

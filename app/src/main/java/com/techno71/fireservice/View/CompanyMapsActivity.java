@@ -1413,7 +1413,7 @@ public class CompanyMapsActivity extends AppCompatActivity
                         }
                         location_wishStorageController = new Location_wishStorageController(locationWithStorageShowList, CompanyMapsActivity.this);
                         recyclerView_locationStorag.setAdapter(location_wishStorageController);
-                        location_wishStorageController.notifyDataSetChanged();
+                        //location_wishStorageController.notifyDataSetChanged();
 
                         Button submitButton = view1.findViewById(R.id.submit_btn);
                         EditText floorEt= view1.findViewById(R.id.floor_edittext);
