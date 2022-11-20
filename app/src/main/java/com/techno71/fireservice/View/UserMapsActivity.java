@@ -1448,6 +1448,7 @@ public class UserMapsActivity extends AppCompatActivity implements
         error.printStackTrace();
 
     }
+//    id floor color comment
     private void addComment(String id, String comment, String color) {
         SharedPreferences sp=context.getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
         String accessTocken= sp.getString("access_token","access_token found");

@@ -96,7 +96,8 @@ public class myService extends Service {
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
 
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
+                .setCategory(Notification.CATEGORY_CALL)
+                .setAutoCancel(true)
                 .build();
         startForeground(2, notification);
     }
@@ -117,12 +118,7 @@ public class myService extends Service {
         try {
             Intent notificationIntent = new Intent(this, MainActivity.class);
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-            }else {
-                pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-            }
+            pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
             notification= new Notification[]{new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setContentTitle("Bekar Agent App Refreshing")
@@ -130,6 +126,7 @@ public class myService extends Service {
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentIntent(pendingIntent)
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setAutoCancel(true)
                     .build()};
             startForeground(1, notification[0]);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -137,15 +134,13 @@ public class myService extends Service {
 
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                notificationManager = getSystemService(NotificationManager.class);
-            }
+            notificationManager = getSystemService(NotificationManager.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 notificationManager.createNotificationChannel(notificationChannel);
             }
         }
         catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

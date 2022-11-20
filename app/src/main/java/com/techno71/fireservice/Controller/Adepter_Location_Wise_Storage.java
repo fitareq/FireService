@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,7 +72,7 @@ public class Adepter_Location_Wise_Storage extends RecyclerView.Adapter<Adepter_
     @Override
     public ViewHolderClass onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
 
-       ModelLocationWiseStorageBinding binding=ModelLocationWiseStorageBinding.bind(LayoutInflater.from(parent.getContext()).inflate(R.layout.model_location_wise_storage, parent, false));
+        ModelLocationWiseStorageBinding binding = ModelLocationWiseStorageBinding.bind(LayoutInflater.from(parent.getContext()).inflate(R.layout.model_location_wise_storage, parent, false));
 
 
         return new ViewHolderClass(binding);
@@ -134,24 +135,26 @@ public class Adepter_Location_Wise_Storage extends RecyclerView.Adapter<Adepter_
     public class ViewHolderClass extends RecyclerView.ViewHolder {
 
 
-        private TextView  email, joiningDate,nameTv,amountTv;
+        private TextView email, joiningDate, nameTv, amountTv;
         private CircleImageView parsonlogo;
-		private DecimalFormat decimal=new DecimalFormat("#.##");
+        private DecimalFormat decimal = new DecimalFormat("#.##");
         private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyy, hh:mm a ", Locale.getDefault());
         private ModelLocationWiseStorageBinding binding;
+
         private ViewHolderClass(@NonNull ModelLocationWiseStorageBinding itemView) {
             super(itemView.getRoot());
-            binding=itemView;
+            binding = itemView;
 
         }
 
         private List<AllLocations_WiseStorage_Comments_3> allLocationsWiseStorageComments3s;
+        private ArrayList<AllLocations_WiseStorage_Comments_3> allComments = new ArrayList<>();
         private com.techno71.fireservice.Controller.Adepter_Location_Comments adepter_location_comments;
 
         @SuppressLint("SetTextI18n")
         public void showData(AllLocations_WiseStorage_2 model, int position) {
 
-            Glide.with(activity).load(Main_Url.ROOT_URL+model.getStorage_img()).into(binding.companyImg);
+            /*Glide.with(activity).load(Main_Url.ROOT_URL+model.getStorage_img()).into(binding.companyImg);
             binding.idTv.setText(""+model.getId());
             binding.floorTv.setText(""+model.getFloor());
             binding.companyNameTv.setText(""+model.getCompany_name());
@@ -163,54 +166,80 @@ public class Adepter_Location_Wise_Storage extends RecyclerView.Adapter<Adepter_
             binding.districTv.setText(""+model.getDistric());
             binding.divisionTv.setText(""+model.getDivision());
             binding.companyTypeTv.setText(""+model.getCompany_type());
-            binding.commpanyDetailsTv.setText(""+model.getCompany_detils());
+            binding.commpanyDetailsTv.setText(""+model.getCompany_detils());*/
+            String alertColor = model.getAlert_tag().toString();
+            if (alertColor.equalsIgnoreCase("Red"))
+                binding.mainContainer.setBackgroundColor(Color.RED);
+            else if (alertColor.equalsIgnoreCase("Green"))
+                binding.mainContainer.setBackgroundColor(Color.GREEN);
+            else if (alertColor.equalsIgnoreCase("Yellow"))
+                binding.mainContainer.setBackgroundColor(Color.YELLOW);
 
-            binding.itemView.setOnClickListener(new View.OnClickListener() {
+            binding.floorTv.setText("Floor: " + model.getFloor());
+            binding.positionTitle.setText("Position Title: " + model.getCompany_name());
+            binding.phone.setText("Phone: ");
+
+
+            getAllComments(access_token, "" + model.getId());
+
+            binding.redComment.setOnClickListener(view -> {
+                showAllFiremanCommentLocation_3("", "Red", "");
+            });
+            binding.greenComment.setOnClickListener(view -> {
+                showAllFiremanCommentLocation_3("", "Green", "");
+            });
+            binding.yellowComment.setOnClickListener(view -> {
+                showAllFiremanCommentLocation_3("", "Yellow", "");
+            });
+
+            /*binding.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     FireMapActivity.vibrator(activity);
                     pDialog.show();
-                    showAllFiremanCommentLocation_3(access_token,""+model.getId());
+                    showAllFiremanCommentLocation_3(access_token, "" + model.getAlert_tag(),""+model.getId() );
                 }
-            });
+            });*/
 
         }
-        public void showAllFiremanCommentLocation_3(String axcess_token,String store_id) {
-            pDialog.show();
 
-            allLocationsWiseStorageComments3s=new ArrayList<>();
-            adepter_location_comments=new com.techno71.fireservice.Controller.Adepter_Location_Comments(activity,allLocationsWiseStorageComments3s);
+        public void getAllComments(String accessToken, String storeId) {
             RequestQueue requestQueue = Volley.newRequestQueue(activity);
-
-        /*
-        allLocationsWiseStorage2s= new Gson().fromJson(
-                jsonArray.toString(),
-                new TypeToken<List<Adepter_Location_Wise_Storage>>(){}.getType();
-        */
-
-            StringRequest stringRequest1 = new StringRequest(Request.Method.POST, showAllFiremanCommentLocation_3,new Response.Listener<String>() {
+            StringRequest stringRequest1 = new StringRequest(Request.Method.POST, showAllFiremanCommentLocation_3, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
 
+                    int red = 0, green = 0, yellow = 0;
                     try {
-                        Log.d("bbbbbbb",""+response);
+                        Log.d("bbbbbbb", "" + response);
 
-                        JSONObject jsonObjectMain=new JSONObject(response);
-                        JSONArray jsonArray= jsonObjectMain.getJSONArray("UserComment");
-                        if (jsonObjectMain.getString("message").equals("Data is available!")){
-                            for (int i=0;i<jsonArray.length();i++){
-                                AllLocations_WiseStorage_Comments_3 storage_2=new AllLocations_WiseStorage_Comments_3(
-                                        ""+jsonArray.getJSONObject(i).getString("id"),
-                                        ""+jsonArray.getJSONObject(i).getString("store_id"),
-                                        ""+jsonArray.getJSONObject(i).getString("comment"),
-                                        ""+jsonArray.getJSONObject(i).getString("alert_tag")
+                        JSONObject jsonObjectMain = new JSONObject(response);
+                        JSONArray jsonArray = jsonObjectMain.getJSONArray("UserComment");
+                        if (jsonObjectMain.getString("message").equals("Data is available!")) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                AllLocations_WiseStorage_Comments_3 storage_2 = new AllLocations_WiseStorage_Comments_3(
+                                        "" + jsonArray.getJSONObject(i).getString("id"),
+                                        "" + jsonArray.getJSONObject(i).getString("store_id"),
+                                        "" + jsonArray.getJSONObject(i).getString("comment"),
+                                        "" + jsonArray.getJSONObject(i).getString("alert_tag")
                                 );
-                                allLocationsWiseStorageComments3s.add(storage_2);
+
+                                allComments.add(storage_2);
+                                if (storage_2.getAlert_tag().toString().equalsIgnoreCase("Red"))
+                                    ++red;
+                                else if (storage_2.getAlert_tag().toString().equalsIgnoreCase("Green"))
+                                    ++green;
+                                else if (storage_2.getAlert_tag().toString().equalsIgnoreCase("Yellow"))
+                                    ++yellow;
 
                             }
 
-                            bottomShetDialog();
-                        }else {
+                            binding.redComment.setText("Red: " + red);
+                            binding.greenComment.setText("Green: " + green);
+                            binding.yellowComment.setText("Yellow: " + yellow);
+
+                            //bottomShetDialog();
+                        } else {
                             pDialog.dismiss();
                             Toast.makeText(activity, "No Data Found", Toast.LENGTH_SHORT).show();
                         }
@@ -219,7 +248,7 @@ public class Adepter_Location_Wise_Storage extends RecyclerView.Adapter<Adepter_
                     } catch (JSONException e) {
                         e.printStackTrace();
                         pDialog.dismiss();
-                        Toast.makeText(activity, ""+e, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "" + e, Toast.LENGTH_SHORT).show();
 
                     }
 
@@ -228,31 +257,111 @@ public class Adepter_Location_Wise_Storage extends RecyclerView.Adapter<Adepter_
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     pDialog.dismiss();
-                    Toast.makeText(activity, ""+error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "" + error, Toast.LENGTH_SHORT).show();
 
                 }
-            }){
+            }) {
                 @Override
                 protected Map<String, String> getParams() {
 
                     Map<String, String> hashMap = new HashMap<String, String>();
-                    hashMap.put("security_error","tec71");
-                    hashMap.put("axcess_token",""+axcess_token);
-                    hashMap.put("store_id",""+store_id);
+                    hashMap.put("security_error", "tec71");
+                    hashMap.put("axcess_token", "" + accessToken);
+                    hashMap.put("store_id", "" + storeId);
 
                     return hashMap;
                 }
             };
             requestQueue.add(stringRequest1);
-
         }
 
-        private void bottomShetDialog(){
+        public void showAllFiremanCommentLocation_3(String axcess_token, String alertTag, String storeId) {
+            pDialog.show();
+
+            allLocationsWiseStorageComments3s = new ArrayList<>();
+            adepter_location_comments = new com.techno71.fireservice.Controller.Adepter_Location_Comments(activity, allLocationsWiseStorageComments3s);
+
+
+            for (AllLocations_WiseStorage_Comments_3 com : allComments) {
+                if (com.getAlert_tag().toString().equalsIgnoreCase(alertTag)) {
+                    allLocationsWiseStorageComments3s.add(com);
+                }
+            }
+
+            if (allLocationsWiseStorageComments3s.isEmpty()) {
+                Toast.makeText(activity, "No Data Found", Toast.LENGTH_SHORT).show();
+            } else {
+                bottomShetDialog();
+            }
+            pDialog.dismiss();
+           /* RequestQueue requestQueue = Volley.newRequestQueue(activity);
+
+            StringRequest stringRequest1 = new StringRequest(Request.Method.POST, showAllFiremanCommentLocation_3, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    try {
+                        Log.d("bbbbbbb", "" + response);
+
+                        JSONObject jsonObjectMain = new JSONObject(response);
+                        JSONArray jsonArray = jsonObjectMain.getJSONArray("UserComment");
+                        if (jsonObjectMain.getString("message").equals("Data is available!")) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                AllLocations_WiseStorage_Comments_3 storage_2 = new AllLocations_WiseStorage_Comments_3(
+                                        "" + jsonArray.getJSONObject(i).getString("id"),
+                                        "" + jsonArray.getJSONObject(i).getString("store_id"),
+                                        "" + jsonArray.getJSONObject(i).getString("comment"),
+                                        "" + jsonArray.getJSONObject(i).getString("alert_tag")
+                                );
+                                if (storage_2.getAlert_tag().equals(alertTag))
+                                    allLocationsWiseStorageComments3s.add(storage_2);
+
+                            }
+
+                            bottomShetDialog();
+                        } else {
+                            pDialog.dismiss();
+                            Toast.makeText(activity, "No Data Found", Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        pDialog.dismiss();
+                        Toast.makeText(activity, "" + e, Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    pDialog.dismiss();
+                    Toast.makeText(activity, "" + error, Toast.LENGTH_SHORT).show();
+
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+
+                    Map<String, String> hashMap = new HashMap<String, String>();
+                    hashMap.put("security_error", "tec71");
+                    hashMap.put("axcess_token", "" + axcess_token);
+                    hashMap.put("store_id", "" + storeId);
+
+                    return hashMap;
+                }
+            };
+            requestQueue.add(stringRequest1);
+*/
+        }
+
+        private void bottomShetDialog() {
             pDialog.dismiss();
 
-            BottomSheetDialog bottomSheetDialog=new BottomSheetDialog(activity);
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(activity);
             bottomSheetDialog.setContentView(R.layout.dialog_location_fiar);
-            RecyclerView recyclerView=bottomSheetDialog.findViewById(R.id.recyclerView);
+            RecyclerView recyclerView = bottomSheetDialog.findViewById(R.id.recyclerView);
             recyclerView.setHasFixedSize(true);
             recyclerView.setAdapter(adepter_location_comments);
             bottomSheetDialog.show();

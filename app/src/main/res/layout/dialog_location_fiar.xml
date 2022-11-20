@@ -10,10 +10,6 @@
 
 
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_500sdp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -31,5 +27,4 @@
             app:stackFromEnd="false"
             tools:listitem="@layout/model_location_wise_storage"
              />
-    </LinearLayout>
 </LinearLayout>

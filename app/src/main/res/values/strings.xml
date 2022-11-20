@@ -54,7 +54,7 @@
     <string-array name="user_type">
         <item>Select Type</item>
         <item>User</item>
-        <item>Company</item>
+        <!--<item>Company</item>-->
     </string-array>
 
     <string-array name="company_flat">

@@ -121,7 +121,7 @@ public class Adepter_Location_Comments extends RecyclerView.Adapter<Adepter_Loca
             if (model.getAlert_tag().toString().toLowerCase().equals("yellow")){
                 binding.itemView.setCardBackgroundColor(Color.YELLOW);
             }
-            binding.storeIdTv.setText(""+model.getStore_id());
+            //binding.storeIdTv.setText(""+model.getStore_id());
             binding.commentTv.setText(""+model.getComment());
         }
     }

@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
     android:layout_marginBottom="10dp"
@@ -12,7 +13,19 @@
     app:cardCornerRadius="10dp"
     app:cardElevation="10dp">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/commentTv"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_semibold"
+        android:paddingRight="8dp"
+        android:text="fyuf hguj jhi"
+        android:textStyle="normal"
+        android:textColor="@color/Black"
+        android:textSize="18dp"
+        android:padding="@dimen/_10sdp"/>
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -144,7 +157,7 @@
         </LinearLayout>
 
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 
 </androidx.cardview.widget.CardView>

@@ -106,6 +106,8 @@ public class FireMapActivity extends FragmentActivity implements
         OnMapReadyCallback,
         LocationListener, android.location.LocationListener, DirectionCallback {
 
+    private boolean currentLocationMarker = false;
+
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private SharedPreferences sharedPreferences_type;
@@ -521,6 +523,22 @@ public class FireMapActivity extends FragmentActivity implements
                 databaseReference.child(access_token).setValue(myLocation);
                 myLocationLat = new LatLng(location.getLatitude(), location.getLongitude());
 
+                if (!currentLocationMarker) {
+                    sharedPreferences_type.edit().putString("myLatitud", String.valueOf(location.getLatitude())).commit();
+                    sharedPreferences_type.edit().putString("myLongitude", String.valueOf(location.getLongitude())).commit();
+                    mMap.addMarker(new MarkerOptions().position(myLocationLat).title("Current Location")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));
+
+                    /*MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(myLocationLat);
+                    markerOptions.title("Current Location");
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+
+                    mMap.addMarker(markerOptions);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));*/
+                    currentLocationMarker = true;
+                }
                 getLocationMap();
 
             }
@@ -552,16 +570,15 @@ public class FireMapActivity extends FragmentActivity implements
 
                 distance = SphericalUtil.computeDistanceBetween(myLocationLat, userLocationLat);
 
-                if (isActivityStart) {
+                /*if (isActivityStart) {
                     isActivityStart = false;
-                   /* mMap.addMarker(new MarkerOptions().position(myLocationLat).title("Current Location")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));*/
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocationLat));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
-                }
+                    //mMap.addMarker(new MarkerOptions().position(myLocationLat).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));
+                   // mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocationLat));
+                   // mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
+                }*/
                 mMap.setMinZoomPreference(6.0f);
-                mMap.setMaxZoomPreference(17.5f);
+                mMap.setMaxZoomPreference(20.0f);
 
                 MarkerOptions markerOptions1 = new MarkerOptions();
                 markerOptions1.position(userLocationLat);
@@ -823,9 +840,9 @@ public class FireMapActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        /*LatLng latLng_curent = new LatLng(location.getLatitude(), location.getLongitude());
+       // LatLng latLng_curent = new LatLng(location.getLatitude(), location.getLongitude());
 
-        sharedPreferences_type.edit().putString("myLatitud", String.valueOf(location.getLatitude())).commit();
+        /*sharedPreferences_type.edit().putString("myLatitud", String.valueOf(location.getLatitude())).commit();
         sharedPreferences_type.edit().putString("myLongitude", String.valueOf(location.getLongitude())).commit();
         mMap.addMarker(new MarkerOptions().position(latLng_curent).title("Current Location")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));*/
@@ -970,7 +987,7 @@ public class FireMapActivity extends FragmentActivity implements
                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
 
                             }
-                            mMap.animateCamera(CameraUpdateFactory.zoomTo(1));
+                            //mMap.animateCamera(CameraUpdateFactory.zoomTo(1));
 
                         }
                         pDialog.dismiss();
@@ -1036,7 +1053,7 @@ public class FireMapActivity extends FragmentActivity implements
     private Adepter_Location_Wise_Storage adepterLocationWiseStorage;
 
     public void showAllWiseLocation_2(double latitude, double longtitude) {
-        //    pDialog.show();
+            pDialog.show();
 
         allLocationsWiseStorage2s = new ArrayList<>();
         adepterLocationWiseStorage = new Adepter_Location_Wise_Storage(this, allLocationsWiseStorage2s);
@@ -1095,10 +1112,10 @@ public class FireMapActivity extends FragmentActivity implements
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    //  Toast.makeText(getApplicationContext(), ""+e, Toast.LENGTH_SHORT).show();
+                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     pDialog.dismiss();
-                    new CountDownTimer(5000, 1000) {
+                    /*new CountDownTimer(5000, 1000) {
                         @Override
                         public void onTick(long millisUntilFinished) {
 
@@ -1109,7 +1126,7 @@ public class FireMapActivity extends FragmentActivity implements
                             showAllWiseLocation_2(latitude, longtitude);
 
                         }
-                    }.start();
+                    }.start();*/
 
                 }
 
@@ -1121,7 +1138,7 @@ public class FireMapActivity extends FragmentActivity implements
                 Toast.makeText(getApplicationContext(), "Flat Not Found", Toast.LENGTH_SHORT).show();
 
                 //   Toast.makeText(FireMapActivity.this, ""+error, Toast.LENGTH_SHORT).show();
-                new CountDownTimer(5000, 1000) {
+                /*new CountDownTimer(5000, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
 
@@ -1132,7 +1149,7 @@ public class FireMapActivity extends FragmentActivity implements
                         showAllWiseLocation_2(latitude, longtitude);
 
                     }
-                }.start();
+                }.start();*/
 
             }
         }) {
