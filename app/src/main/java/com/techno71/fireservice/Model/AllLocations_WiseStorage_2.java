@@ -2,12 +2,12 @@ package com.techno71.fireservice.Model;
 
 public class AllLocations_WiseStorage_2 {
     private Object id,floor,company_name,company_owner,license_approved_date,license_renew_date,address
-            ,thana,distric,division,company_type,company_detils,storage_img,alert_tag,status;
+            ,thana,distric,division,company_type,company_detils,storage_img,alert_tag,status, mobile_no;
 
     public AllLocations_WiseStorage_2() {
     }
 
-    public AllLocations_WiseStorage_2(Object id, Object floor, Object company_name, Object company_owner, Object license_approved_date, Object license_renew_date, Object address,  Object thana, Object distric, Object division, Object company_type, Object company_detils, Object storage_img, Object alert_tag, Object status) {
+    public AllLocations_WiseStorage_2(Object id, Object floor, Object company_name, Object company_owner, Object license_approved_date, Object license_renew_date, Object address, Object thana, Object distric, Object division, Object company_type, Object company_detils, Object storage_img, Object alert_tag, Object status, Object mobile_no) {
         this.id = id;
         this.floor = floor;
         this.company_name = company_name;
@@ -23,6 +23,7 @@ public class AllLocations_WiseStorage_2 {
         this.storage_img = storage_img;
         this.alert_tag = alert_tag;
         this.status = status;
+        this.mobile_no = mobile_no;
     }
 
     public Object getId() {
@@ -52,8 +53,6 @@ public class AllLocations_WiseStorage_2 {
     public Object getAddress() {
         return address;
     }
-
-
 
     public Object getThana() {
         return thana;
@@ -85,5 +84,9 @@ public class AllLocations_WiseStorage_2 {
 
     public Object getStatus() {
         return status;
+    }
+
+    public Object getMobile_no() {
+        return mobile_no;
     }
 }

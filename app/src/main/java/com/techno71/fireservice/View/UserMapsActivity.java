@@ -125,7 +125,9 @@ public class UserMapsActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    private ProgressDialog progressDialog;
     private GoogleMap mMap;
+    private HashMap<String, String> locationId = new HashMap<>();
 
     private static final int request_code = 101;
 
@@ -227,7 +229,11 @@ public class UserMapsActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_maps);
         toolbar = (Toolbar) findViewById(R.id.toolbar_usermap);
-        context=this;
+        context = this;
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
 
@@ -341,17 +347,19 @@ public class UserMapsActivity extends AppCompatActivity implements
         startService();
         forgaService();*/
     }
+
     public void checkOverlayPermission() {
 
         if (!Settings.canDrawOverlays(this)) {
             // send user to the device settings
             Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
             startActivity(myIntent);
-        }else {
-            Window window=new Window(this);
+        } else {
+            Window window = new Window(this);
             window.open();
         }
     }
+
     public void startService() {
         // check if the user has already granted
         // the Draw over other apps permission
@@ -364,6 +372,7 @@ public class UserMapsActivity extends AppCompatActivity implements
             }
         }
     }
+
     private void forgaService() {
         ActivityCompat.requestPermissions(this, new String[]{FOREGROUND_SERVICE}, PackageManager.PERMISSION_GRANTED);
         IntentFilter intentFilter = new IntentFilter();
@@ -472,6 +481,7 @@ public class UserMapsActivity extends AppCompatActivity implements
         RequestQueue requestQueue = Volley.newRequestQueue(UserMapsActivity.this);
         requestQueue.add(stringRequest);
     }
+
     private Marker dragMerker;
 
     @Override
@@ -493,16 +503,15 @@ public class UserMapsActivity extends AppCompatActivity implements
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(@NonNull LatLng latLng) {
-                if (dragMerker!=null){
+                if (dragMerker != null) {
                     dragMerker.remove();
-                    dragMerker=null;
+                    dragMerker = null;
                 }
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title("Select Position");
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-                dragMerker=mMap.addMarker(markerOptions);
-
+                dragMerker = mMap.addMarker(markerOptions);
 
 
             }
@@ -511,8 +520,10 @@ public class UserMapsActivity extends AppCompatActivity implements
     }
 
     private BottomSheetDialog bottomSheetDialog;
-    private String  storage_add= Main_Url.ROOT_URL +"api/user-add-storage";
-    private void setComments(){
+    private String storage_add = Main_Url.ROOT_URL + "api/user-add-storage";
+    private String addCommentAPI = Main_Url.ROOT_URL + "api/storage-add-comment";
+
+    private void setComments() {
         bottomSheetDialog = new BottomSheetDialog(context);
 
         bottomSheetDialog.setContentView(R.layout.user_comments_unwnon);
@@ -523,8 +534,8 @@ public class UserMapsActivity extends AppCompatActivity implements
         Spinner spinnerColor = bottomSheetDialog.findViewById(R.id.spinner_Usercolor);
         Spinner spinnerFloor = bottomSheetDialog.findViewById(R.id.spinner_UserFloor);
 
-        Button button_submit=bottomSheetDialog.findViewById(R.id.userComment_submit);
-        Button button_close=bottomSheetDialog.findViewById(R.id.userComment_close);
+        Button button_submit = bottomSheetDialog.findViewById(R.id.userComment_submit);
+        Button button_close = bottomSheetDialog.findViewById(R.id.userComment_close);
 
         button_close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -536,56 +547,57 @@ public class UserMapsActivity extends AppCompatActivity implements
         button_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String title=""+editTextTitle.getText();
-                String details=""+editTextDetails.getText();
-                String color=""+spinnerColor.getSelectedItem();
-                String floor=""+spinnerFloor.getSelectedItem();
-                String address=""+getCompleteAddressString(dragMerker.getPosition().latitude,dragMerker.getPosition().longitude);
-                String latitude=""+dragMerker.getPosition().latitude;
-                String longitude=""+dragMerker.getPosition().longitude;
-                String accessTocken = ""+sharedPreferences_type.getString("access_token", "access_token found");
+                String title = "" + editTextTitle.getText();
+                String details = "" + editTextDetails.getText();
+                String color = "" + spinnerColor.getSelectedItem();
+                String floor = "" + spinnerFloor.getSelectedItem();
+                String address = "" + getCompleteAddressString(dragMerker.getPosition().latitude, dragMerker.getPosition().longitude);
+                String latitude = "" + dragMerker.getPosition().latitude;
+                String longitude = "" + dragMerker.getPosition().longitude;
+                String accessTocken = "" + sharedPreferences_type.getString("access_token", "access_token found");
 
-                if (title.isEmpty()){
+                if (title.isEmpty()) {
                     editTextTitle.setError("Requaird");
                     editTextTitle.requestFocus();
                     return;
                 }
-                if (details.isEmpty()){
+                if (details.isEmpty()) {
                     editTextDetails.setError("Requaird");
                     editTextDetails.requestFocus();
                     return;
                 }
 
-                if (color.equals("Select--Colors--")){
+                if (color.equals("Select--Colors--")) {
                     Toast.makeText(context, "Colors is Empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (floor.equals("Select--Floor--")){
+                if (floor.equals("Select--Floor--")) {
                     Toast.makeText(context, "Floor is Empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                storage_add_comment(title,details,color,floor,address,latitude,longitude,accessTocken);
+                storage_add_comment(title, details, color, floor, address, latitude, longitude, accessTocken);
             }
         });
 
         bottomSheetDialog.show();
     }
-    private void  storage_add_comment(String title,String details,String color,String floor,String address,String latitude,String longitude,String accessTocken){
+
+    private void storage_add_comment(String title, String details, String color, String floor, String address, String latitude, String longitude, String accessTocken) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, storage_add, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try {
-                    JSONObject jsonObjectMain=new JSONObject(response);
+                    JSONObject jsonObjectMain = new JSONObject(response);
 
-                    if(jsonObjectMain.getString("message").contains("Comment Successfully!")){
+                    if (jsonObjectMain.getString("message").contains("Comment Successfully!")) {
                         bottomSheetDialog.dismiss();
                         Toast.makeText(context, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
-                    }else{
+                    } else {
 
-                        Toast.makeText(context, "error:"+jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "error:" + jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -597,28 +609,29 @@ public class UserMapsActivity extends AppCompatActivity implements
                 netWorkError(error);
 
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() {
 
                 Map<String, String> hashMap = new HashMap<String, String>();
-                hashMap.put("security_error","tec71");
-                hashMap.put("axcess_token",accessTocken);
-                hashMap.put("title",title);
-                hashMap.put("company_latitude",latitude);
-                hashMap.put("company_longtude",longitude);
-                hashMap.put("address",address);
-                hashMap.put("floor",floor);
-                hashMap.put("company_detils",details);
-                hashMap.put("alert_tag",color);
+                hashMap.put("security_error", "tec71");
+                hashMap.put("axcess_token", accessTocken);
+                hashMap.put("title", title);
+                hashMap.put("company_latitude", latitude);
+                hashMap.put("company_longtude", longitude);
+                hashMap.put("address", address);
+                hashMap.put("floor", floor);
+                hashMap.put("company_detils", details);
+                hashMap.put("alert_tag", color);
                 return hashMap;
             }
         };
 
-        RequestQueue requestQueue= Volley.newRequestQueue(context);
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
     }
+
     private String getCompleteAddressString(double latitude, double longitude) {
         String strAdd = "";
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -642,7 +655,6 @@ public class UserMapsActivity extends AppCompatActivity implements
         }
         return strAdd;
     }
-
 
 
     private void verify_Account() {
@@ -698,6 +710,7 @@ public class UserMapsActivity extends AppCompatActivity implements
         RequestQueue requestQueue1 = Volley.newRequestQueue(UserMapsActivity.this);
         requestQueue1.add(stringRequest);
     }
+
     protected synchronized void bulidGoogleApiClient() {
         client = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
         client.connect();
@@ -705,9 +718,9 @@ public class UserMapsActivity extends AppCompatActivity implements
     }
 
 
-    private void showAllMarkers(GoogleMap mMap,boolean isMarker) {
+    private void showAllMarkers(GoogleMap mMap, boolean isMarker) {
 
-        if (isMarker){
+        if (isMarker) {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             for (MarkerOptions m : markerList) {
                 builder.include(m.getPosition());
@@ -733,19 +746,19 @@ public class UserMapsActivity extends AppCompatActivity implements
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
                 String title = marker.getTitle();
-                if (isMarker){
+                if (isMarker) {
 
-                    merkerClick(marker.getPosition().latitude,marker.getPosition().longitude, title);
+                    merkerClick(marker.getPosition().latitude, marker.getPosition().longitude, title);
 
-                }else {
-                    if (dragMerker==null){
+                } else {
+                    if (dragMerker == null) {
 
-                    }else {
-                        if (dragMerker.getPosition().latitude==marker.getPosition().latitude ||
-                                dragMerker.getPosition().longitude==marker.getPosition().longitude){
-                            merkerClick(marker.getPosition().latitude,marker.getPosition().longitude, title);
+                    } else {
+                        if (dragMerker.getPosition().latitude == marker.getPosition().latitude ||
+                                dragMerker.getPosition().longitude == marker.getPosition().longitude) {
+                            merkerClick(marker.getPosition().latitude, marker.getPosition().longitude, title);
 
-                        }else {
+                        } else {
 
                         }
                     }
@@ -756,7 +769,8 @@ public class UserMapsActivity extends AppCompatActivity implements
         });
 
     }
-    private void merkerClick(double latitude,double longitude, String title){
+
+    private void merkerClick(double latitude, double longitude, String title) {
 
         vibrator(getApplicationContext());
 
@@ -767,23 +781,23 @@ public class UserMapsActivity extends AppCompatActivity implements
         bottomSheet_option.show();
         Button button_flat = view.findViewById(R.id.button_flat_submit);
 
-        if (title.equalsIgnoreCase("Select Position"))
+        /*if (title.equalsIgnoreCase("Select Position"))
             button_flat.setText("Danger");
         else
-            button_flat.setText("Flat");
+            button_flat.setText("Flat");*/
 
         button_flat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (dragMerker==null){
-                    Show_loaction_wise_Storage(latitude,longitude);
+                if (dragMerker == null) {
+                    Show_loaction_wise_Storage(latitude, longitude);
 
-                }else {
-                    if (dragMerker.getPosition().latitude==latitude || dragMerker.getPosition().longitude==longitude){
+                } else {
+                    if (dragMerker.getPosition().latitude == latitude || dragMerker.getPosition().longitude == longitude) {
                         setComments();
-                    }else {
-                        Show_loaction_wise_Storage(latitude,longitude);
+                    } else {
+                        Show_loaction_wise_Storage(latitude, longitude);
 
                     }
                 }
@@ -825,6 +839,7 @@ public class UserMapsActivity extends AppCompatActivity implements
         });
 
     }
+
     public static void vibrator(Context context) {
         Vibrator v = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -836,7 +851,7 @@ public class UserMapsActivity extends AppCompatActivity implements
 
 
     private void Show_loaction_wise_Storage(double latitude, double longitude) {
-
+        progressDialog.show();
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         LayoutInflater layoutInflater1 = getLayoutInflater();
         View view1 = layoutInflater1.inflate(R.layout.user_location_storag_show, null);
@@ -886,49 +901,54 @@ public class UserMapsActivity extends AppCompatActivity implements
                             }
 
                         }
-                        location_wishStorageController = new Location_wishStorageController(locationWithStorageShowList, UserMapsActivity.this);
+                        String l_id = locationId.get(latitude+""+longitude);
+                        location_wishStorageController = new Location_wishStorageController(l_id,locationWithStorageShowList, UserMapsActivity.this);
                         recyclerView_locationStorag.setAdapter(location_wishStorageController);
                         //location_wishStorageController.notifyDataSetChanged();
 
                         Button submitButton = view1.findViewById(R.id.submit_btn);
-                        EditText floorEt= view1.findViewById(R.id.floor_edittext);
+                        EditText floorEt = view1.findViewById(R.id.floor_edittext);
                         Spinner colorSpinner = view1.findViewById(R.id.color_spiner);
                         EditText commentEt = view1.findViewById(R.id.comment_edittext);
                         submitButton.setOnClickListener(view2 -> {
                             String floor = floorEt.getText().toString();
                             String color = colorSpinner.getSelectedItem().toString();
                             String comment = commentEt.getText().toString();
-                            if (TextUtils.isEmpty(floor)){
+                            if (TextUtils.isEmpty(floor)) {
                                 floorEt.setError("Enter a valid floor...");
-                            }else if (color.equals("Select color…")){
+                            } else if (color.equals("Select color…")) {
                                 Toast.makeText(UserMapsActivity.this, "Select a color...", Toast.LENGTH_SHORT).show();
-                            }else if (TextUtils.isEmpty(comment)){
+                            } else if (TextUtils.isEmpty(comment)) {
                                 commentEt.setError("Enter a comment...");
-                            }else{
+                            } else {
                                 String id = "-001";
-                                for (LocationWithStorageShow item: locationWithStorageShowList){
-                                    if (floor.equalsIgnoreCase(item.getFloor())){
+                                for (LocationWithStorageShow item : locationWithStorageShowList) {
+                                    if (floor.equalsIgnoreCase(item.getFloor())) {
                                         id = item.getId();
+                                        floor = item.getFloor();
                                     }
                                 }
                                 if (id.equals("-001"))
                                     floorEt.setError("Enter a valid floor...");
-                                else addComment(id, comment, color);
+                                else addComment(id, comment, color, floor);
                             }
                         });
                         bottomSheetDialog.show();
                     } else {
                         Toast.makeText(UserMapsActivity.this, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
                     }
+                    progressDialog.dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(UserMapsActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 netWorkError(error);
-
+                progressDialog.dismiss();
             }
         }) {
             @Override
@@ -991,7 +1011,7 @@ public class UserMapsActivity extends AppCompatActivity implements
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                                 alertTypeName = arrayList_alertType.get(position).toString();
-                                Log.d("TAG","type selected          "+alertTypeName);
+                                Log.d("TAG", "type selected          " + alertTypeName);
                             }
 
                             @Override
@@ -1328,6 +1348,7 @@ public class UserMapsActivity extends AppCompatActivity implements
 
                                 latitude_stg = Double.parseDouble(jsonObject.getString("latitude"));
                                 longitude_stg = Double.parseDouble(String.valueOf(jsonObject.getDouble("longtude")));
+                                String id = jsonObject.getString("id");
 
                                 LatLng latLng_storag = new LatLng(latitude_stg, longitude_stg);
 
@@ -1341,10 +1362,13 @@ public class UserMapsActivity extends AppCompatActivity implements
                                 if (marker_tag.equalsIgnoreCase("Red")) {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                                }else{
+                                } else {
 
-                                        markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                                    markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                 }
+
+                                String locationIdKey = latitude_stg + "" + longitude_stg;
+                                locationId.put(locationIdKey, id);
 
                                 //markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                 markerStorage.position(latLng_storag).title(jsonObject.getString("title"));
@@ -1353,10 +1377,10 @@ public class UserMapsActivity extends AppCompatActivity implements
 
 
                         }
-                        showAllMarkers(mMap,true);
+                        showAllMarkers(mMap, true);
 
                     } else {
-                        showAllMarkers(mMap,false);
+                        showAllMarkers(mMap, false);
                         Toast.makeText(UserMapsActivity.this, jsonObjectMain.getString("message"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
@@ -1448,27 +1472,34 @@ public class UserMapsActivity extends AppCompatActivity implements
         error.printStackTrace();
 
     }
-//    id floor color comment
-    private void addComment(String id, String comment, String color) {
-        SharedPreferences sp=context.getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
-        String accessTocken= sp.getString("access_token","access_token found");
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, storage_add, new Response.Listener<String>() {
+
+    //    id floor color comment
+    private void addComment(String id, String comment, String color, String floor) {
+        progressDialog.show();
+        SharedPreferences sp = context.getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
+        String accessTocken = sp.getString("access_token", "access_token found");
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, addCommentAPI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try {
-                    JSONObject jsonObjectMain=new JSONObject(response);
+                    JSONObject jsonObjectMain = new JSONObject(response);
 
-                    if(jsonObjectMain.getString("message").contains("Comment Successfully!")){
+                    if (jsonObjectMain.getString("message").contains("Successfully")) {
                         //bottomSheetDialog.dismiss();
                         Toast.makeText(context, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
-                    }else{
+                    } else {
 
-                        Toast.makeText(context, "error:"+jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "" + jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
                     }
+
+                    progressDialog.dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -1476,24 +1507,24 @@ public class UserMapsActivity extends AppCompatActivity implements
                 netWorkError(error);
 
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() {
 
                 Map<String, String> hashMap = new HashMap<String, String>();
-                hashMap.put("security_error","tec71");
-                hashMap.put("store_id",id);
-                hashMap.put("axcess_token",accessTocken);
-                hashMap.put("comment",comment);
-                hashMap.put("alert_tag",color);
-                hashMap.put("title", "title");
+                hashMap.put("security_error", "tec71");
+                hashMap.put("location_id", id);
+                hashMap.put("axcess_token", accessTocken);
+                hashMap.put("comment", comment);
+                hashMap.put("alert_tag", color);
+                hashMap.put("floor", floor);
                 return hashMap;
             }
         };
 
-        RequestQueue requestQueue= Volley.newRequestQueue(context);
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
     }
-    
+
 }
 

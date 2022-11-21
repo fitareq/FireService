@@ -16,6 +16,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -87,6 +88,7 @@ import com.techno71.fireservice.Model.language_model;
 import com.techno71.fireservice.Other_icons;
 import com.techno71.fireservice.R;
 import com.techno71.fireservice.databinding.ActivityFireMapBinding;
+import com.techno71.fireservice.forgaund.Sound;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -370,6 +372,8 @@ public class FireMapActivity extends FragmentActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        if (Sound.isPlaying())
+            Sound.stopSound();
         language_model language = new language_model(this);
         language.loadLanguage();
         isActivityStart = true;
@@ -1079,6 +1083,7 @@ public class FireMapActivity extends FragmentActivity implements
                             String status = jsonArray.getJSONObject(i).getString("status");
                             if (status.equals("1")) {
                                 AllLocations_WiseStorage_2 storage_2 = new AllLocations_WiseStorage_2(
+
                                         "" + jsonArray.getJSONObject(i).getString("id"),
                                         "" + jsonArray.getJSONObject(i).getString("floor"),
                                         "" + jsonArray.getJSONObject(i).getString("company_name"),
@@ -1093,7 +1098,8 @@ public class FireMapActivity extends FragmentActivity implements
                                         "" + jsonArray.getJSONObject(i).getString("company_detils"),
                                         "" + jsonArray.getJSONObject(i).getString("storage_img"),
                                         "" + jsonArray.getJSONObject(i).getString("alert_tag"),
-                                        "" + jsonArray.getJSONObject(i).getString("status")
+                                        "" + jsonArray.getJSONObject(i).getString("status"),
+                                        ""+jsonArray.getJSONObject(i).getString("mobile_no")
 
                                 );
                                 allLocationsWiseStorage2s.add(storage_2);

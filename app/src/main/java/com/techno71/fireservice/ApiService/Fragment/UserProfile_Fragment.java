@@ -50,13 +50,13 @@ import dev.shreyaspatil.MaterialDialog.MaterialDialog;
 
 public class UserProfile_Fragment extends Fragment {
 
-    private LinearLayout linearLayout_editProf,linearLayout_pass;
+    private LinearLayout linearLayout_editProf, linearLayout_pass;
 
-    private TextView text_editPro,text_pass,
-            textView_verify,textView_userName,textView_phone,textView_fullName;
+    private TextView text_editPro, text_pass,
+            textView_verify, textView_userName, textView_phone, textView_fullName;
 
 
-    private String user_infor = Main_Url.ROOT_URL +"api/get-user-info";
+    private String user_infor = Main_Url.ROOT_URL + "api/get-user-info";
 
 
     private SharedPreferences sharedPreferences_type;
@@ -99,43 +99,43 @@ public class UserProfile_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =inflater.inflate(R.layout.fragment_user_profile_, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_profile_, container, false);
 
-        sharedPreferences_type=getContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
+        sharedPreferences_type = getContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
 
-        language_model language=new language_model(getContext());
+        language_model language = new language_model(getContext());
         language.loadLanguage();
 
-        textView_verify=(TextView)view.findViewById(R.id.CompanyVerifyStatus);
+        textView_verify = (TextView) view.findViewById(R.id.CompanyVerifyStatus);
 
-        textView_phone=(TextView)view.findViewById(R.id.text_profilePhone);
+        textView_phone = (TextView) view.findViewById(R.id.text_profilePhone);
 
-        textView_userName=(TextView)view.findViewById(R.id.text_profileName);
-        textView_fullName=(TextView)view.findViewById(R.id.textProfilFullName);
+        textView_userName = (TextView) view.findViewById(R.id.text_profileName);
+        textView_fullName = (TextView) view.findViewById(R.id.textProfilFullName);
 
-        circleImageView=(CircleImageView)view.findViewById(R.id.user_profileImage);
+        circleImageView = (CircleImageView) view.findViewById(R.id.user_profileImage);
 
 
-        text_editPro=(TextView) view.findViewById(R.id.editprofile);
+        text_editPro = (TextView) view.findViewById(R.id.editprofile);
         text_editPro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getContext(), Profile_EditActivity.class);
+                Intent intent = new Intent(getContext(), Profile_EditActivity.class);
                 startActivity(intent);
             }
         });
 
-        language_model  langua_model=new language_model(getContext());
-           langua_model.loadLanguage();
+        language_model langua_model = new language_model(getContext());
+        langua_model.loadLanguage();
 
-        text_pass=(TextView)view.findViewById(R.id.editPass);
+        text_pass = (TextView) view.findViewById(R.id.editPass);
 
         text_pass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                 Intent intent_pass=new Intent(getContext(), InformationLoddingActivity.class);
-                intent_pass.putExtra("Techno","userPass");
+                Intent intent_pass = new Intent(getContext(), InformationLoddingActivity.class);
+                intent_pass.putExtra("Techno", "userPass");
                 startActivity(intent_pass);
 
             }
@@ -151,7 +151,7 @@ public class UserProfile_Fragment extends Fragment {
         getUserInfromation();
     }
 
-    private void getUserInfromation(){
+    private void getUserInfromation() {
 
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
 
@@ -159,37 +159,37 @@ public class UserProfile_Fragment extends Fragment {
         progressDialog.setContentView(R.layout.custom_progress);
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-        String  accessTocken= sharedPreferences_type.getString("access_token","access_token found");
+        String accessTocken = sharedPreferences_type.getString("access_token", "access_token found");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, user_infor, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try {
-                    JSONObject jsonObjectMain=new JSONObject(response);
+                    JSONObject jsonObjectMain = new JSONObject(response);
 
 
-                    if(jsonObjectMain.getString("message").contains("Data is available!")){
+                    if (jsonObjectMain.getString("message").contains("Data is available!")) {
                         progressDialog.dismiss();
 
 
-                        JSONArray jsonArray= jsonObjectMain.getJSONArray("UserInfo");
+                        JSONArray jsonArray = jsonObjectMain.getJSONArray("UserInfo");
 
-                        for (int i = 0; i <jsonArray.length() ;i++) {
+                        for (int i = 0; i < jsonArray.length(); i++) {
 
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                            sharedPreferences_type.edit().putString("status",jsonObject.getString("company_verify_status")).commit();
-                            sharedPreferences_type.edit().putString("user_type",jsonObject.getString("user_type")).commit();
+                            sharedPreferences_type.edit().putString("status", jsonObject.getString("company_verify_status")).commit();
+                            sharedPreferences_type.edit().putString("user_type", jsonObject.getString("user_type")).commit();
 
-                            textView_phone.setText(""+jsonObject.getString("user_name"));
-                            textView_fullName.setText(""+jsonObject.getString("user_name"));
-                            textView_userName.setText(""+jsonObject.getString("mobile_no"));
+                            textView_phone.setText("" + jsonObject.getString("user_name"));
+                            textView_fullName.setText("" + jsonObject.getString("user_name"));
+                            textView_userName.setText("" + jsonObject.getString("mobile_no"));
 
-                            String image="https://fifaar.com/public/"+jsonObject.getString("user_picture");
-                             Picasso.get().load(image).into(circleImageView);
+                            String image = "https://fifaar.com/public/" + jsonObject.getString("user_picture");
+                            Picasso.get().load(image).into(circleImageView);
 
-                            if(jsonObject.getString("user_type").contains("2")){
+                            /*if(jsonObject.getString("user_type").contains("2")){
 
                                 textView_verify.setVisibility(View.VISIBLE);
 
@@ -245,18 +245,18 @@ public class UserProfile_Fragment extends Fragment {
                                     textView_verify.setTextColor(getResources().getColor(R.color.YellowGreen));
 
                                 }
-                            }
+                            }*/
 
                         }
 
-                    }else if(jsonObjectMain.getString("message").contains("Sry Access Token Not match")){
+                    } else if (jsonObjectMain.getString("message").contains("Sry Access Token Not match")) {
 
-                        Intent intent=new Intent(getContext(), LoginActivity.class);
+                        Intent intent = new Intent(getContext(), LoginActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         sharedPreferences_type.edit().clear().commit();
-                        Toast.makeText(getContext(),jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
-                    }else{
+                        Toast.makeText(getContext(), jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
+                    } else {
 
                         progressDialog.dismiss();
                         Toast.makeText(getContext(), jsonObjectMain.getString("message"), Toast.LENGTH_SHORT).show();
@@ -274,20 +274,20 @@ public class UserProfile_Fragment extends Fragment {
                 progressDialog.dismiss();
                 netWorkError(error);
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() {
 
                 Map<String, String> hashMap = new HashMap<String, String>();
 
-                hashMap.put("security_error","tec71");
-                hashMap.put("axcess_token",accessTocken);
+                hashMap.put("security_error", "tec71");
+                hashMap.put("axcess_token", accessTocken);
 
                 return hashMap;
             }
         };
 
-        RequestQueue requestQueue= Volley.newRequestQueue(getContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
 

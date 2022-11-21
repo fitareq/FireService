@@ -177,7 +177,7 @@ public class Adepter_Location_Wise_Storage extends RecyclerView.Adapter<Adepter_
 
             binding.floorTv.setText("Floor: " + model.getFloor());
             binding.positionTitle.setText("Position Title: " + model.getCompany_name());
-            binding.phone.setText("Phone: ");
+            binding.phone.setText("Phone: "+model.getMobile_no());
 
 
             getAllComments(access_token, "" + model.getId());

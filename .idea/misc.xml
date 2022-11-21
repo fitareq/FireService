@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/FireService_New/FireService_New/app/src/main/res/drawable/ic_bookmark_add.xml" value="0.185" />
         <entry key="..\:/FireService_New/FireService_New/app/src/main/res/layout/activity_company_maps.xml" value="0.18796296296296297" />
         <entry key="..\:/FireService_New/FireService_New/app/src/main/res/layout/activity_login.xml" value="0.18796296296296297" />
         <entry key="..\:/FireService_New/FireService_New/app/src/main/res/layout/activity_register.xml" value="0.20416666666666666" />
@@ -17,6 +18,7 @@
         <entry key="..\:/FireService_New/FireService_New/app/src/main/res/layout/user_comment.xml" value="0.18796296296296297" />
         <entry key="..\:/FireService_New/FireService_New/app/src/main/res/layout/user_comments_unwnon.xml" value="0.20416666666666666" />
         <entry key="..\:/FireService_New/FireService_New/app/src/main/res/layout/user_location_storag_show.xml" value="0.18" />
+        <entry key="..\:/FireService_New/FireService_New/app/src/main/res/layout/user_own_comment.xml" value="0.20416666666666666" />
       </map>
     </option>
   </component>

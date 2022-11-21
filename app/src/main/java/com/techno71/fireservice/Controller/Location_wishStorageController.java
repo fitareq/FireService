@@ -34,6 +34,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 import com.techno71.fireservice.ApiService.Main_Url;
@@ -65,13 +66,16 @@ public   class Location_wishStorageController extends RecyclerView.Adapter<Locat
     private SharedPreferences sharedPreferences_type;
 
     private String  storage_add= Main_Url.ROOT_URL +"api/storage-add-comment";
+    private String  addBookmark= Main_Url.ROOT_URL +"api/add-bookmark-list";
 
     private   BottomSheetDialog bottomSheetDialog;
+    private String locationId;
 
 
-    public Location_wishStorageController(List<LocationWithStorageShow> locationWithStorageShowList, Context context) {
+    public Location_wishStorageController(String locationId, List<LocationWithStorageShow> locationWithStorageShowList, Context context) {
         this.locationWithStorageShowList = locationWithStorageShowList;
         this.context = context;
+        this.locationId = locationId;
     }
 
     @NonNull
@@ -96,12 +100,12 @@ public   class Location_wishStorageController extends RecyclerView.Adapter<Locat
         LocationWithStorageShow item = locationWithStorageShowList.get(position);
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                myviewHolder.itemView.getContext(),
-                com.google.android.material.R.layout.support_simple_spinner_dropdown_item,
-                new String[]{"comment 1", "comment 2", "comment 3"}
+                context,
+                com.airbnb.lottie.R.layout.support_simple_spinner_dropdown_item,
+                new String[]{"test own comment 1", "test own comment 2", "test own comment 3"}
         );
 
-        myviewHolder.userComments.setAdapter(arrayAdapter);
+//        myviewHolder.userComments.setAdapter(arrayAdapter);
 
         myviewHolder.floor.setText(item.getFloor());
 
@@ -112,6 +116,13 @@ public   class Location_wishStorageController extends RecyclerView.Adapter<Locat
             myviewHolder.mainContainer.setBackgroundColor(Color.GREEN);
         else if (color.equalsIgnoreCase("Yellow"))
             myviewHolder.mainContainer.setBackgroundColor(Color.YELLOW);
+
+        myviewHolder.addBookmark.setOnClickListener(view -> {
+            addToBookMark(item.getId());
+        });
+        myviewHolder.userComments.setOnClickListener(view -> {
+            userOwnCommentBottomSheetDialog(arrayAdapter);
+        });
 
 
         /*myviewHolder.textView_companyName.setText("Name:"+item.getCompany_name());
@@ -134,6 +145,49 @@ public   class Location_wishStorageController extends RecyclerView.Adapter<Locat
         setAnimiton(myviewHolder.itemView,position);
 
     }
+
+    private void addToBookMark(String id) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, addBookmark, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONObject jsonObjectMain=new JSONObject(response);
+
+                    if(jsonObjectMain.getString("message").contains("Successfully")){
+                        //bottomSheetDialog.dismiss();
+                        Toast.makeText(context, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
+                    }else{
+
+                        Toast.makeText(context, ""+jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                netWorkError(error);
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+
+                Map<String, String> hashMap = new HashMap<String, String>();
+                hashMap.put("security_error","tec71");
+                hashMap.put("location_id",locationId);
+                hashMap.put("storage_id",id);
+                hashMap.put("axcess_token",accessTocken);
+                return hashMap;
+            }
+        };
+
+        RequestQueue requestQueue= Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+    }
+
     private void setComments(LocationWithStorageShow item){
 
         LayoutInflater layoutInflater=LayoutInflater.from(context);
@@ -272,17 +326,19 @@ public   class Location_wishStorageController extends RecyclerView.Adapter<Locat
 
 
       private TextView floor;
-      private ListView userComments;
+      private TextView userComments;
 
       //floating_comment_storage
       private FloatingActionButton floatingactionbutton;
       private ConstraintLayout mainContainer;
+      private FloatingActionButton addBookmark;
 
        public MyviewHolder(@NonNull View itemView) {
            super(itemView);
 
            floor = itemView.findViewById(R.id.floor_tv);
-           userComments = itemView.findViewById(R.id.user_comments);
+           userComments = itemView.findViewById(R.id.own_comment);
+           addBookmark = itemView.findViewById(R.id.addBookmark);
            mainContainer= itemView.findViewById(R.id.main_container);
 
            /*textView_companyName=itemView.findViewById(R.id.text_company_name);
@@ -296,5 +352,16 @@ public   class Location_wishStorageController extends RecyclerView.Adapter<Locat
            imageView=itemView.findViewById(R.id.company_markImage);
            floatingactionbutton=(FloatingActionButton)itemView.findViewById(R.id.floating_comment_storage);*/
        }
+    }
+
+    private void userOwnCommentBottomSheetDialog(ArrayAdapter<String> arrayAdapter) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        bottomSheetDialog.setContentView(R.layout.user_own_comment);
+        ListView listView = bottomSheetDialog.findViewById(R.id.comment_list);
+        if (listView != null) {
+            listView.setAdapter(arrayAdapter);
+            bottomSheetDialog.show();
+        }
+
     }
 }

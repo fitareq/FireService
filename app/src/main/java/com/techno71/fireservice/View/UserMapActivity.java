@@ -54,6 +54,7 @@ import com.google.maps.android.SphericalUtil;
 import com.techno71.fireservice.Model.MyLocation;
 import com.techno71.fireservice.R;
 import com.techno71.fireservice.databinding.ActivityUserMapBinding;
+import com.techno71.fireservice.forgaund.Sound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -620,6 +621,8 @@ public class UserMapActivity extends FragmentActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        if (Sound.isPlaying())
+            Sound.stopSound();
         isActivityStart = true;
     }
 

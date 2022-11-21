@@ -144,6 +144,7 @@ public class CompanyMapsActivity extends AppCompatActivity
     Timer timer = new Timer();
     int current_icon = 0;
 
+    private ProgressDialog progressDialog;
 
     private GoogleMap mMap;
     private RecyclerView recyclerView_locationStorag;
@@ -162,6 +163,7 @@ public class CompanyMapsActivity extends AppCompatActivity
     double latitude_stg, longitude_stg;
 
     private List<MarkerOptions> markerList = new ArrayList<>();
+    private HashMap<String, String> locationId = new HashMap<>();
 
     private ArrayList<String> arrayList_spinnerColor = new ArrayList<>();
     private ArrayAdapter<String> arrayAdapter_spinnerColors;
@@ -217,6 +219,10 @@ public class CompanyMapsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company_maps);
         context = this;
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
         sharedPreferences_type = getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
 
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
@@ -300,7 +306,9 @@ public class CompanyMapsActivity extends AppCompatActivity
 
                     case R.id.SideCom_addStorage:
 
-                        String status = sharedPreferences_type.getString("status", "Status Not Found");
+                        Intent intent_add = new Intent(CompanyMapsActivity.this, StorageAddActivity.class);
+                        startActivity(intent_add);
+                        /*String status = sharedPreferences_type.getString("status", "Status Not Found");
 
                         if (status.contains("2")) {
 
@@ -346,7 +354,7 @@ public class CompanyMapsActivity extends AppCompatActivity
 
                             Toast.makeText(CompanyMapsActivity.this, "User Type Not Found!!", Toast.LENGTH_SHORT).show();
 
-                        }
+                        }*/
                         drawerLayout.closeDrawer(GravityCompat.START);
                         break;
 
@@ -386,7 +394,7 @@ public class CompanyMapsActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null)
-        mapFragment.getMapAsync(this);
+            mapFragment.getMapAsync(this);
         else Toast.makeText(this, "No Map Found...", Toast.LENGTH_SHORT).show();
 
 
@@ -682,6 +690,7 @@ public class CompanyMapsActivity extends AppCompatActivity
 
     private BottomSheetDialog bottomSheetDialog;
     private String storage_add = Main_Url.ROOT_URL + "api/user-add-storage";
+    private String addCommentAPI = Main_Url.ROOT_URL + "api/storage-add-comment";
 
     private void setComments() {
 
@@ -839,6 +848,7 @@ public class CompanyMapsActivity extends AppCompatActivity
 
                                 latitude_stg = Double.parseDouble(jsonObject.getString("latitude"));
                                 longitude_stg = Double.parseDouble(String.valueOf(jsonObject.getDouble("longtude")));
+                                String id = jsonObject.getString("id");
 
                                 LatLng latLng_storag = new LatLng(latitude_stg, longitude_stg);
 
@@ -849,14 +859,14 @@ public class CompanyMapsActivity extends AppCompatActivity
                                 if (marker_tag.equalsIgnoreCase("Yellow")) {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                                }
-                                else if (marker_tag.equalsIgnoreCase("Red")) {
+                                } else if (marker_tag.equalsIgnoreCase("Red")) {
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                                }else{
-                                        //selectColors=HUE_GREEN;
-                                        markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                                } else {
+                                    //selectColors=HUE_GREEN;
+                                    markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                 }
-
+                                String locationIdKey = latitude_stg+""+longitude_stg;
+                                locationId.put(locationIdKey, id);
 
                                 //markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                 markerStorage.position(latLng_storag).title(jsonObject.getString("title"));
@@ -1215,10 +1225,10 @@ public class CompanyMapsActivity extends AppCompatActivity
         bottomSheet_option.show();
         Button button_flat = view.findViewById(R.id.button_flat_submit);
 
-        if (title.equalsIgnoreCase("Select Position"))
+        /*if (title.equalsIgnoreCase("Select Position"))
             button_flat.setText("Danger");
         else
-            button_flat.setText("Flat");
+            button_flat.setText("Flat");*/
 
         button_flat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1360,7 +1370,7 @@ public class CompanyMapsActivity extends AppCompatActivity
     }
 
     private void Show_loaction_wise_Storage(double latitude, double longitude) {
-
+        progressDialog.show();
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         LayoutInflater layoutInflater1 = getLayoutInflater();
         View view1 = layoutInflater1.inflate(R.layout.user_location_storag_show, null);
@@ -1411,52 +1421,57 @@ public class CompanyMapsActivity extends AppCompatActivity
                             }
 
                         }
-                        location_wishStorageController = new Location_wishStorageController(locationWithStorageShowList, CompanyMapsActivity.this);
+                        String l_id = locationId.get(latitude+""+longitude);
+                        location_wishStorageController = new Location_wishStorageController(l_id,locationWithStorageShowList, CompanyMapsActivity.this);
                         recyclerView_locationStorag.setAdapter(location_wishStorageController);
                         //location_wishStorageController.notifyDataSetChanged();
 
                         Button submitButton = view1.findViewById(R.id.submit_btn);
-                        EditText floorEt= view1.findViewById(R.id.floor_edittext);
+                        EditText floorEt = view1.findViewById(R.id.floor_edittext);
                         Spinner colorSpinner = view1.findViewById(R.id.color_spiner);
                         EditText commentEt = view1.findViewById(R.id.comment_edittext);
                         submitButton.setOnClickListener(view2 -> {
                             String floor = floorEt.getText().toString();
                             String color = colorSpinner.getSelectedItem().toString();
                             String comment = commentEt.getText().toString();
-                            if (TextUtils.isEmpty(floor)){
+                            if (TextUtils.isEmpty(floor)) {
                                 floorEt.setError("Enter a valid floor...");
-                            }else if (color.equals("Select color…")){
+                            } else if (color.equals("Select color…")) {
                                 Toast.makeText(CompanyMapsActivity.this, "Select a color...", Toast.LENGTH_SHORT).show();
-                            }else if (TextUtils.isEmpty(comment)){
+                            } else if (TextUtils.isEmpty(comment)) {
                                 commentEt.setError("Enter a comment...");
-                            }else{
+                            } else {
                                 String id = "-001";
-                                for (LocationWithStorageShow item: locationWithStorageShowList){
-                                    if (floor.equalsIgnoreCase(item.getFloor())){
+                                for (LocationWithStorageShow item : locationWithStorageShowList) {
+                                    if (floor.equalsIgnoreCase(item.getFloor())) {
                                         id = item.getId();
+                                        floor = item.getFloor();
                                     }
                                 }
                                 if (id.equals("-001"))
                                     floorEt.setError("Enter a valid floor...");
-                                else addComment(id, comment, color);
+                                else addComment(id, comment, color, floor);
                             }
                         });
 
                         bottomSheetDialog.show();
 
                     } else {
-
                         Toast.makeText(CompanyMapsActivity.this, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
                     }
+
+                    progressDialog.dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(CompanyMapsActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 netWorkError(error);
-
+                progressDialog.dismiss();
             }
         }) {
             @Override
@@ -1475,48 +1490,53 @@ public class CompanyMapsActivity extends AppCompatActivity
 
     }
 
-    private void addComment(String id, String comment, String color) {
-        SharedPreferences sp=context.getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
-        String accessTocken= sp.getString("access_token","access_token found");
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, storage_add, new Response.Listener<String>() {
+    private void addComment(String id, String comment, String color, String floor) {
+        progressDialog.show();
+        SharedPreferences sp = context.getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
+        String accessTocken = sp.getString("access_token", "access_token found");
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, addCommentAPI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try {
-                    JSONObject jsonObjectMain=new JSONObject(response);
+                    JSONObject jsonObjectMain = new JSONObject(response);
 
-                    if(jsonObjectMain.getString("message").contains("Comment Successfully!")){
+                    if (jsonObjectMain.getString("message").contains("Successfully")) {
                         //bottomSheetDialog.dismiss();
                         Toast.makeText(context, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
-                    }else{
+                    } else {
 
-                        Toast.makeText(context, "error:"+jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "" + jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
                     }
+                    progressDialog.dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 netWorkError(error);
-
+                progressDialog.dismiss();
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() {
 
                 Map<String, String> hashMap = new HashMap<String, String>();
-                hashMap.put("security_error","tec71");
-                hashMap.put("store_id",id);
-                hashMap.put("axcess_token",accessTocken);
-                hashMap.put("comment",comment);
-                hashMap.put("alert_tag",color);
+                hashMap.put("security_error", "tec71");
+                hashMap.put("location_id", id);
+                hashMap.put("axcess_token", accessTocken);
+                hashMap.put("comment", comment);
+                hashMap.put("alert_tag", color);
+                hashMap.put("floor", floor);
                 return hashMap;
             }
         };
 
-        RequestQueue requestQueue= Volley.newRequestQueue(context);
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
     }
 

@@ -75,16 +75,21 @@ public class myService extends Service {
     // for android version >=O we need to create
     // custom notification stating
     // foreground service is running
-    @RequiresApi(Build.VERSION_CODES.O)
+    //@RequiresApi(Build.VERSION_CODES.O)
     private void startMyOwnForeground()
     {
         String NOTIFICATION_CHANNEL_ID = "example.permanence";
         String channelName = "Background Service";
-        NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_MIN);
+        NotificationChannel chan = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_MIN);
+        }
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         assert manager != null;
-        manager.createNotificationChannel(chan);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            manager.createNotificationChannel(chan);
+        }
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(true)
@@ -122,7 +127,7 @@ public class myService extends Service {
 
             notification= new Notification[]{new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setContentTitle("Bekar Agent App Refreshing")
-                    .setContentText("Refresh Time Running : " + timeLeft.toString().replace("-",""))
+                    //.setContentText("Refresh Time Running : " + timeLeft.toString().replace("-",""))
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentIntent(pendingIntent)
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
