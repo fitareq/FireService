@@ -649,6 +649,7 @@ public class CompanyMapsActivity extends AppCompatActivity
     }
 
     private Marker dragMerker;
+    private Marker invisibleDragMerker;
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -675,11 +676,28 @@ public class CompanyMapsActivity extends AppCompatActivity
                     dragMerker.remove();
                     dragMerker = null;
                 }
+
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title("Select Position");
+                markerOptions.draggable(true);
+//                markerOptions.flat(true);
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                markerOptions.visible(true);
                 dragMerker = mMap.addMarker(markerOptions);
+                if (invisibleDragMerker != null){
+                    invisibleDragMerker.remove();
+                    invisibleDragMerker = null;
+                }
+                MarkerOptions invisibleMarkerOptions = new MarkerOptions();
+                invisibleMarkerOptions.position(latLng);
+                invisibleMarkerOptions.title("Select Position");
+                invisibleMarkerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.invisible_marker));
+                invisibleMarkerOptions.visible(true);
+                invisibleMarkerOptions.alpha(0f);
+                invisibleDragMerker = mMap.addMarker(invisibleMarkerOptions);
+
+
 
 
             }
@@ -856,10 +874,10 @@ public class CompanyMapsActivity extends AppCompatActivity
 
                                 marker_tag = jsonObject.getString("tag_color");
 
-                                if (marker_tag.equalsIgnoreCase("Yellow")) {
+                                /*if (marker_tag.equalsIgnoreCase("Yellow")) {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                                } else if (marker_tag.equalsIgnoreCase("Red")) {
+                                }*/if (marker_tag.equalsIgnoreCase("Red")) {
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                                 } else {
                                     //selectColors=HUE_GREEN;
@@ -1422,7 +1440,7 @@ public class CompanyMapsActivity extends AppCompatActivity
 
                         }
                         String l_id = locationId.get(latitude+""+longitude);
-                        location_wishStorageController = new Location_wishStorageController(l_id,locationWithStorageShowList, CompanyMapsActivity.this);
+                        location_wishStorageController = new Location_wishStorageController(l_id,locationWithStorageShowList, CompanyMapsActivity.this, true);
                         recyclerView_locationStorag.setAdapter(location_wishStorageController);
                         //location_wishStorageController.notifyDataSetChanged();
 

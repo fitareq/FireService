@@ -77,9 +77,6 @@ public class MessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "CHANNEL_ID");
         //            builder.setSmallIcon(R.drawable.icontrans);
         builder.setSmallIcon(R.drawable.ic_baseline_notifications_24);
-        builder.setSound(soundUri);
-        builder.setVibrate(pattern);
-        builder.setAutoCancel(true);
 
         if (user_type.contains("1")) {
 
@@ -116,16 +113,13 @@ public class MessagingService extends FirebaseMessagingService {
             NotificationChannel channel = new NotificationChannel(
                     channelId,
                     "Channel human readable title",
-                    NotificationManager.IMPORTANCE_MIN);
+                    NotificationManager.IMPORTANCE_HIGH);
 
             channel.setSound(soundUri, audioAttributes);
             channel.enableLights(true);
             channel.enableVibration(true);
             mNotificationManager.createNotificationChannel(channel);
             builder.setChannelId(channelId);
-            builder.setSound(soundUri);
-            builder.setVibrate(pattern);
-            builder.setAutoCancel(true);
         }
 
 // notificationId is a unique int for each notification that you must define

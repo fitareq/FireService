@@ -70,12 +70,14 @@ public   class Location_wishStorageController extends RecyclerView.Adapter<Locat
 
     private   BottomSheetDialog bottomSheetDialog;
     private String locationId;
+    private boolean isCompany;
 
 
-    public Location_wishStorageController(String locationId, List<LocationWithStorageShow> locationWithStorageShowList, Context context) {
+    public Location_wishStorageController(String locationId, List<LocationWithStorageShow> locationWithStorageShowList, Context context, boolean isCompany) {
         this.locationWithStorageShowList = locationWithStorageShowList;
         this.context = context;
         this.locationId = locationId;
+        this.isCompany = isCompany;
     }
 
     @NonNull
@@ -98,6 +100,10 @@ public   class Location_wishStorageController extends RecyclerView.Adapter<Locat
            accessTocken= sharedPreferences_type.getString("access_token","access_token found");
 
         LocationWithStorageShow item = locationWithStorageShowList.get(position);
+
+        if (isCompany){
+            myviewHolder.addBookmark.setVisibility(View.VISIBLE);
+        }
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                 context,

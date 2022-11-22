@@ -124,8 +124,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         typeface_signUp_login = Typeface.createFromAsset(getAssets(), "fonts/regular.ttf");
         textView_singUp_login.setTypeface(typeface_signUp_login);
+        userType = 3;
 
-        spinner_userType=(Spinner)findViewById(R.id.userType_spinner);
+        /*spinner_userType=(Spinner)findViewById(R.id.userType_spinner);
 
         spinner_userType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -145,7 +146,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
-        });
+        });*/
 
     }
 

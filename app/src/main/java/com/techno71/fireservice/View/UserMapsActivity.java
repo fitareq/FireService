@@ -75,6 +75,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 import com.techno71.fireservice.ApiService.Main_Url;
@@ -483,6 +484,7 @@ public class UserMapsActivity extends AppCompatActivity implements
     }
 
     private Marker dragMerker;
+    private Marker invisibleDragMerker;
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -507,13 +509,25 @@ public class UserMapsActivity extends AppCompatActivity implements
                     dragMerker.remove();
                     dragMerker = null;
                 }
+
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title("Select Position");
+                markerOptions.draggable(true);
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
                 dragMerker = mMap.addMarker(markerOptions);
 
-
+                if (invisibleDragMerker != null){
+                    invisibleDragMerker.remove();
+                    invisibleDragMerker = null;
+                }
+                MarkerOptions invisibleMarkerOptions = new MarkerOptions();
+                invisibleMarkerOptions.position(latLng);
+                invisibleMarkerOptions.title("Select Position");
+                invisibleMarkerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.invisible_marker));
+                invisibleMarkerOptions.visible(true);
+                invisibleMarkerOptions.alpha(0f);
+                invisibleDragMerker = mMap.addMarker(invisibleMarkerOptions);
             }
         });
 
@@ -902,7 +916,7 @@ public class UserMapsActivity extends AppCompatActivity implements
 
                         }
                         String l_id = locationId.get(latitude+""+longitude);
-                        location_wishStorageController = new Location_wishStorageController(l_id,locationWithStorageShowList, UserMapsActivity.this);
+                        location_wishStorageController = new Location_wishStorageController(l_id,locationWithStorageShowList, UserMapsActivity.this,false );
                         recyclerView_locationStorag.setAdapter(location_wishStorageController);
                         //location_wishStorageController.notifyDataSetChanged();
 
@@ -1358,11 +1372,11 @@ public class UserMapsActivity extends AppCompatActivity implements
                                 if (marker_tag.equalsIgnoreCase("Yellow")) {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                                }
+                                }/*
                                 if (marker_tag.equalsIgnoreCase("Red")) {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                                } else {
+                                }*/ else {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                 }
