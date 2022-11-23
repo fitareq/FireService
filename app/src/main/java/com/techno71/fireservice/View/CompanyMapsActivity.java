@@ -685,7 +685,7 @@ public class CompanyMapsActivity extends AppCompatActivity
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
                 markerOptions.visible(true);
                 dragMerker = mMap.addMarker(markerOptions);
-                if (invisibleDragMerker != null){
+                if (invisibleDragMerker != null) {
                     invisibleDragMerker.remove();
                     invisibleDragMerker = null;
                 }
@@ -696,8 +696,6 @@ public class CompanyMapsActivity extends AppCompatActivity
                 invisibleMarkerOptions.visible(true);
                 invisibleMarkerOptions.alpha(0f);
                 invisibleDragMerker = mMap.addMarker(invisibleMarkerOptions);
-
-
 
 
             }
@@ -877,13 +875,14 @@ public class CompanyMapsActivity extends AppCompatActivity
                                 /*if (marker_tag.equalsIgnoreCase("Yellow")) {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                                }*/if (marker_tag.equalsIgnoreCase("Red")) {
+                                }*/
+                                if (marker_tag.equalsIgnoreCase("Red")) {
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                                 } else {
                                     //selectColors=HUE_GREEN;
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                 }
-                                String locationIdKey = latitude_stg+""+longitude_stg;
+                                String locationIdKey = latitude_stg + "" + longitude_stg;
                                 locationId.put(locationIdKey, id);
 
                                 //markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -1439,21 +1438,21 @@ public class CompanyMapsActivity extends AppCompatActivity
                             }
 
                         }
-                        String l_id = locationId.get(latitude+""+longitude);
-                        location_wishStorageController = new Location_wishStorageController(l_id,locationWithStorageShowList, CompanyMapsActivity.this, true);
+                        String l_id = locationId.get(latitude + "" + longitude);
+                        location_wishStorageController = new Location_wishStorageController(l_id, locationWithStorageShowList, CompanyMapsActivity.this, true);
                         recyclerView_locationStorag.setAdapter(location_wishStorageController);
                         //location_wishStorageController.notifyDataSetChanged();
 
                         Button submitButton = view1.findViewById(R.id.submit_btn);
-                        EditText floorEt = view1.findViewById(R.id.floor_edittext);
+                        Spinner floorSpinner = view1.findViewById(R.id.floor_spinner);
                         Spinner colorSpinner = view1.findViewById(R.id.color_spiner);
                         EditText commentEt = view1.findViewById(R.id.comment_edittext);
                         submitButton.setOnClickListener(view2 -> {
-                            String floor = floorEt.getText().toString();
+                            String floor = floorSpinner.getSelectedItem().toString();
                             String color = colorSpinner.getSelectedItem().toString();
                             String comment = commentEt.getText().toString();
-                            if (TextUtils.isEmpty(floor)) {
-                                floorEt.setError("Enter a valid floor...");
+                            if (floor.equals("Select--Floor--")) {
+                                Toast.makeText(CompanyMapsActivity.this, "Select a floor...", Toast.LENGTH_SHORT).show();
                             } else if (color.equals("Select color…")) {
                                 Toast.makeText(CompanyMapsActivity.this, "Select a color...", Toast.LENGTH_SHORT).show();
                             } else if (TextUtils.isEmpty(comment)) {
@@ -1463,11 +1462,10 @@ public class CompanyMapsActivity extends AppCompatActivity
                                 for (LocationWithStorageShow item : locationWithStorageShowList) {
                                     if (floor.equalsIgnoreCase(item.getFloor())) {
                                         id = item.getId();
-                                        floor = item.getFloor();
                                     }
                                 }
                                 if (id.equals("-001"))
-                                    floorEt.setError("Enter a valid floor...");
+                                    Toast.makeText(CompanyMapsActivity.this, "Select a valid floor...", Toast.LENGTH_SHORT).show();
                                 else addComment(id, comment, color, floor);
                             }
                         });

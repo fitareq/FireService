@@ -921,15 +921,15 @@ public class UserMapsActivity extends AppCompatActivity implements
                         //location_wishStorageController.notifyDataSetChanged();
 
                         Button submitButton = view1.findViewById(R.id.submit_btn);
-                        EditText floorEt = view1.findViewById(R.id.floor_edittext);
+                        Spinner floorSpinner = view1.findViewById(R.id.floor_spinner);
                         Spinner colorSpinner = view1.findViewById(R.id.color_spiner);
                         EditText commentEt = view1.findViewById(R.id.comment_edittext);
                         submitButton.setOnClickListener(view2 -> {
-                            String floor = floorEt.getText().toString();
+                            String floor = floorSpinner.getSelectedItem().toString();
                             String color = colorSpinner.getSelectedItem().toString();
                             String comment = commentEt.getText().toString();
-                            if (TextUtils.isEmpty(floor)) {
-                                floorEt.setError("Enter a valid floor...");
+                            if (floor.equals("Select--Floor--")) {
+                                Toast.makeText(UserMapsActivity.this, "Select a floor...", Toast.LENGTH_SHORT).show();
                             } else if (color.equals("Select color…")) {
                                 Toast.makeText(UserMapsActivity.this, "Select a color...", Toast.LENGTH_SHORT).show();
                             } else if (TextUtils.isEmpty(comment)) {
@@ -939,11 +939,10 @@ public class UserMapsActivity extends AppCompatActivity implements
                                 for (LocationWithStorageShow item : locationWithStorageShowList) {
                                     if (floor.equalsIgnoreCase(item.getFloor())) {
                                         id = item.getId();
-                                        floor = item.getFloor();
                                     }
                                 }
                                 if (id.equals("-001"))
-                                    floorEt.setError("Enter a valid floor...");
+                                    Toast.makeText(UserMapsActivity.this, "Select a valid floor...", Toast.LENGTH_SHORT).show();
                                 else addComment(id, comment, color, floor);
                             }
                         });

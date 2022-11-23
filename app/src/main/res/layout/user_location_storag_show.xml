@@ -17,23 +17,13 @@
             android:orientation="vertical"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/floor_layout"
-                style="@style/OutlinedRoundedBox"
+            <Spinner
+                android:id="@+id/floor_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxStrokeColor="@color/black"
-                app:hintEnabled="false">
-
-                <EditText
-                    android:id="@+id/floor_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Floor"
-                    android:padding="@dimen/_15sdp"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/drop_drown"
+                android:entries="@array/user_floor" />
 
             <Spinner
                 android:id="@+id/color_spiner"
