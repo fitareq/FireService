@@ -82,6 +82,7 @@ import com.techno71.fireservice.ApiService.Main_Url;
 import com.techno71.fireservice.Circle;
 import com.techno71.fireservice.CircleAnimation;
 import com.techno71.fireservice.Controller.Location_wishStorageController;
+import com.techno71.fireservice.Model.AllComment;
 import com.techno71.fireservice.Model.LocationWithStorageShow;
 
 import com.techno71.fireservice.Model.language_model;
@@ -866,6 +867,7 @@ public class UserMapsActivity extends AppCompatActivity implements
 
     private void Show_loaction_wise_Storage(double latitude, double longitude) {
         progressDialog.show();
+        String access_token = sharedPreferences_type.getString("access_token", "default_access_token001");
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         LayoutInflater layoutInflater1 = getLayoutInflater();
         View view1 = layoutInflater1.inflate(R.layout.user_location_storag_show, null);
@@ -890,6 +892,28 @@ public class UserMapsActivity extends AppCompatActivity implements
 
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
+
+
+                            JSONArray comments = jsonObject.getJSONArray("allcomment");
+                            List<AllComment> commentList = new ArrayList<>();
+                            for (int j = 0; j < comments.length(); j++) {
+                                JSONObject comment = comments.getJSONObject(j);
+                                if (comment.getString("status").equals("1")){
+                                    commentList.add(new AllComment(
+                                            comment.getString("id"),
+                                            comment.getString("store_id"),
+                                            comment.getString("user_id"),
+                                            comment.getString("comment"),
+                                            comment.getString("alert_tag"),
+                                            comment.getString("status"),
+                                            comment.getString("loc_id"),
+                                            comment.getString("created_at"),
+                                            comment.getString("updated_at")
+
+                                    ));
+                                }
+                            }
+
                             String image = "https://fifaar.com/public/" + jsonObject.getString("storage_img");
 
                             if (jsonObject.getString("status").contains("1")) {
@@ -909,7 +933,8 @@ public class UserMapsActivity extends AppCompatActivity implements
                                                 jsonObject.getString("company_detils"),
                                                 image,
                                                 jsonObject.getString("alert_tag"),
-                                                jsonObject.getString("status"));
+                                                jsonObject.getString("status"),
+                                                commentList);
 
                                 locationWithStorageShowList.add(withStorageShow);
                             }
@@ -966,9 +991,9 @@ public class UserMapsActivity extends AppCompatActivity implements
         }) {
             @Override
             protected Map<String, String> getParams() {
-
                 Map<String, String> hashMap = new HashMap<String, String>();
                 hashMap.put("security_error", "tec71");
+                hashMap.put("axcess_token",   access_token);
                 hashMap.put("latitude", "" + latitude);
                 hashMap.put("longtude", "" + longitude);
                 return hashMap;

@@ -1,5 +1,7 @@
 package com.techno71.fireservice.Model;
 
+import java.util.List;
+
 public   class LocationWithStorageShow {
 
     private String id;
@@ -17,8 +19,9 @@ public   class LocationWithStorageShow {
     private String storage_img;
     private String alert_tag;
     private String status;
+    private List<AllComment> allComments;
 
-    public LocationWithStorageShow(String id, String floor, String company_name, String company_owner, String license_approved_date, String license_renew_date, String address, String division, String distric, String thana, String company_type, String company_detils, String storage_img, String alert_tag, String status) {
+    public LocationWithStorageShow(String id, String floor, String company_name, String company_owner, String license_approved_date, String license_renew_date, String address, String division, String distric, String thana, String company_type, String company_detils, String storage_img, String alert_tag, String status, List<AllComment> allComments) {
         this.id = id;
         this.floor = floor;
         this.company_name = company_name;
@@ -34,6 +37,7 @@ public   class LocationWithStorageShow {
         this.storage_img = storage_img;
         this.alert_tag = alert_tag;
         this.status = status;
+        this.allComments = allComments;
     }
 
     public String getId() {
@@ -154,5 +158,13 @@ public   class LocationWithStorageShow {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<AllComment> getAllComments() {
+        return allComments;
+    }
+
+    public void setAllComments(List<AllComment> allComments) {
+        this.allComments = allComments;
     }
 }

@@ -38,6 +38,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 import com.techno71.fireservice.ApiService.Main_Url;
+import com.techno71.fireservice.Model.AllComment;
 import com.techno71.fireservice.Model.BookMarkShow;
 import com.techno71.fireservice.Model.LocationWithStorageShow;
 import com.techno71.fireservice.R;
@@ -48,6 +49,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -105,10 +107,20 @@ public   class Location_wishStorageController extends RecyclerView.Adapter<Locat
             myviewHolder.addBookmark.setVisibility(View.VISIBLE);
         }
 
+        List<AllComment> comments = item.getAllComments();
+        List<String> commentString = new ArrayList<>();
+        if (comments != null && !comments.isEmpty()){
+            for (AllComment comment: comments){
+                commentString.add(comment.getComment());
+            }
+        }else {
+            myviewHolder.userComments.setVisibility(View.GONE);
+        }
+
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                 context,
                 com.airbnb.lottie.R.layout.support_simple_spinner_dropdown_item,
-                new String[]{"test own comment 1", "test own comment 2", "test own comment 3"}
+                commentString
         );
 
 //        myviewHolder.userComments.setAdapter(arrayAdapter);
