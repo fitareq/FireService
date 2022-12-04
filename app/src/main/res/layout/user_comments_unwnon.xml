@@ -54,7 +54,10 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:id="@+id/editText_userCompanyDetails"
-                android:textColorHint="@color/black" />
+                android:textColorHint="@color/black"
+                android:minLines="3"
+                android:gravity="start"
+                android:inputType="textMultiLine"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Spinner

@@ -518,7 +518,7 @@ public class UserMapsActivity extends AppCompatActivity implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
                 dragMerker = mMap.addMarker(markerOptions);
 
-                if (invisibleDragMerker != null){
+                if (invisibleDragMerker != null) {
                     invisibleDragMerker.remove();
                     invisibleDragMerker = null;
                 }
@@ -893,12 +893,11 @@ public class UserMapsActivity extends AppCompatActivity implements
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
 
-
                             JSONArray comments = jsonObject.getJSONArray("allcomment");
                             List<AllComment> commentList = new ArrayList<>();
                             for (int j = 0; j < comments.length(); j++) {
                                 JSONObject comment = comments.getJSONObject(j);
-                                if (comment.getString("status").equals("1")){
+                                if (comment.getString("status").equals("1")) {
                                     commentList.add(new AllComment(
                                             comment.getString("id"),
                                             comment.getString("store_id"),
@@ -940,8 +939,8 @@ public class UserMapsActivity extends AppCompatActivity implements
                             }
 
                         }
-                        String l_id = locationId.get(latitude+""+longitude);
-                        location_wishStorageController = new Location_wishStorageController(l_id,locationWithStorageShowList, UserMapsActivity.this,false );
+                        String l_id = locationId.get(latitude + "" + longitude);
+                        location_wishStorageController = new Location_wishStorageController(l_id, locationWithStorageShowList, UserMapsActivity.this, false);
                         recyclerView_locationStorag.setAdapter(location_wishStorageController);
                         //location_wishStorageController.notifyDataSetChanged();
 
@@ -949,6 +948,17 @@ public class UserMapsActivity extends AppCompatActivity implements
                         Spinner floorSpinner = view1.findViewById(R.id.floor_spinner);
                         Spinner colorSpinner = view1.findViewById(R.id.color_spiner);
                         EditText commentEt = view1.findViewById(R.id.comment_edittext);
+
+                        String[] colorData = new String[]{
+                                "Select--Danger--Variation--", "Green", "Yellow"
+                        };
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                                UserMapsActivity.this,
+                                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                                colorData
+                        );
+                        colorSpinner.setAdapter(adapter);
                         submitButton.setOnClickListener(view2 -> {
                             String floor = floorSpinner.getSelectedItem().toString();
                             String color = colorSpinner.getSelectedItem().toString();
@@ -993,7 +1003,7 @@ public class UserMapsActivity extends AppCompatActivity implements
             protected Map<String, String> getParams() {
                 Map<String, String> hashMap = new HashMap<String, String>();
                 hashMap.put("security_error", "tec71");
-                hashMap.put("axcess_token",   access_token);
+                hashMap.put("axcess_token", access_token);
                 hashMap.put("latitude", "" + latitude);
                 hashMap.put("longtude", "" + longitude);
                 return hashMap;
@@ -1396,11 +1406,10 @@ public class UserMapsActivity extends AppCompatActivity implements
                                 if (marker_tag.equalsIgnoreCase("Yellow")) {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                                }/*
-                                if (marker_tag.equalsIgnoreCase("Red")) {
+                                } else if (marker_tag.equalsIgnoreCase("Red")) {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                                }*/ else {
+                                } else {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                 }

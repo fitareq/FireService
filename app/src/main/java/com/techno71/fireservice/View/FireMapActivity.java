@@ -844,7 +844,7 @@ public class FireMapActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-       // LatLng latLng_curent = new LatLng(location.getLatitude(), location.getLongitude());
+        // LatLng latLng_curent = new LatLng(location.getLatitude(), location.getLongitude());
 
         /*sharedPreferences_type.edit().putString("myLatitud", String.valueOf(location.getLatitude())).commit();
         sharedPreferences_type.edit().putString("myLongitude", String.valueOf(location.getLongitude())).commit();
@@ -1057,7 +1057,8 @@ public class FireMapActivity extends FragmentActivity implements
     private Adepter_Location_Wise_Storage adepterLocationWiseStorage;
 
     public void showAllWiseLocation_2(double latitude, double longtitude) {
-            pDialog.show();
+        pDialog.show();
+        String access_token = sharedPreferences_type.getString("access_token", "default_access_token001");
 
         allLocationsWiseStorage2s = new ArrayList<>();
         adepterLocationWiseStorage = new Adepter_Location_Wise_Storage(this, allLocationsWiseStorage2s);
@@ -1099,7 +1100,7 @@ public class FireMapActivity extends FragmentActivity implements
                                         "" + jsonArray.getJSONObject(i).getString("storage_img"),
                                         "" + jsonArray.getJSONObject(i).getString("alert_tag"),
                                         "" + jsonArray.getJSONObject(i).getString("status"),
-                                        ""+jsonArray.getJSONObject(i).getString("mobile_no")
+                                        "" + jsonArray.getJSONObject(i).getString("mobile_no")
 
                                 );
                                 allLocationsWiseStorage2s.add(storage_2);
@@ -1118,7 +1119,7 @@ public class FireMapActivity extends FragmentActivity implements
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     pDialog.dismiss();
                     /*new CountDownTimer(5000, 1000) {
@@ -1164,6 +1165,7 @@ public class FireMapActivity extends FragmentActivity implements
 
                 Map<String, String> hashMap = new HashMap<String, String>();
                 hashMap.put("security_error", "tec71");
+                hashMap.put("axcess_token",   access_token);
                 hashMap.put("latitude", "" + latitude);
                 hashMap.put("longtude", "" + longtitude);
 
@@ -1204,7 +1206,7 @@ public class FireMapActivity extends FragmentActivity implements
     @Override
     protected void onStop() {
         sharedPreferences_type.edit().putString("imgType", null).commit();
-        Log.d(TAG, "on stop ............. fireman "+sharedPreferences_type.getString("imgType", null));
+        Log.d(TAG, "on stop ............. fireman " + sharedPreferences_type.getString("imgType", null));
         super.onStop();
     }
 }

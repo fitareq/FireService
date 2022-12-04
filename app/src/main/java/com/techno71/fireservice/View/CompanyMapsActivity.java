@@ -723,6 +723,20 @@ public class CompanyMapsActivity extends AppCompatActivity
         Button button_submit = bottomSheetDialog.findViewById(R.id.userComment_submit);
         Button button_close = bottomSheetDialog.findViewById(R.id.userComment_close);
 
+
+        if (spinnerColor != null) {
+            String[] colorData = new String[]{
+                    "Select--Danger--Variation--", "Green", "Red"
+            };
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    CompanyMapsActivity.this,
+                    androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                    colorData
+            );
+            spinnerColor.setAdapter(adapter);
+        }
+
         button_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -873,11 +887,10 @@ public class CompanyMapsActivity extends AppCompatActivity
 
                                 marker_tag = jsonObject.getString("tag_color");
 
-                                /*if (marker_tag.equalsIgnoreCase("Yellow")) {
+                                if (marker_tag.equalsIgnoreCase("Yellow")) {
 
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                                }*/
-                                if (marker_tag.equalsIgnoreCase("Red")) {
+                                } else if (marker_tag.equalsIgnoreCase("Red")) {
                                     markerStorage.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                                 } else {
                                     //selectColors=HUE_GREEN;
@@ -1471,6 +1484,17 @@ public class CompanyMapsActivity extends AppCompatActivity
                         Spinner floorSpinner = view1.findViewById(R.id.floor_spinner);
                         Spinner colorSpinner = view1.findViewById(R.id.color_spiner);
                         EditText commentEt = view1.findViewById(R.id.comment_edittext);
+
+                        String[] colorData = new String[]{
+                                "Select--Danger--Variation--", "Green", "Red"
+                        };
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                                CompanyMapsActivity.this,
+                                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                                colorData
+                        );
+                        colorSpinner.setAdapter(adapter);
                         submitButton.setOnClickListener(view2 -> {
                             String floor = floorSpinner.getSelectedItem().toString();
                             String color = colorSpinner.getSelectedItem().toString();
@@ -1519,7 +1543,7 @@ public class CompanyMapsActivity extends AppCompatActivity
 
                 Map<String, String> hashMap = new HashMap<String, String>();
                 hashMap.put("security_error", "tec71");
-                hashMap.put("axcess_token",   access_token);
+                hashMap.put("axcess_token", access_token);
                 hashMap.put("latitude", String.valueOf(latitude));
                 hashMap.put("longtude", String.valueOf(longitude));
                 return hashMap;
