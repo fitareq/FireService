@@ -1512,9 +1512,10 @@ public class CompanyMapsActivity extends AppCompatActivity
                                         id = item.getId();
                                     }
                                 }
-                                if (id.equals("-001"))
+                                addComment(id, comment, color, floor);
+                                /*if (id.equals("-001"))
                                     Toast.makeText(CompanyMapsActivity.this, "Select a valid floor...", Toast.LENGTH_SHORT).show();
-                                else addComment(id, comment, color, floor);
+                                else addComment(id, comment, color, floor);*/
                             }
                         });
 

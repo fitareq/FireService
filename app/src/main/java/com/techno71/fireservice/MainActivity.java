@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-       curve = findViewById(R.id.curve2);
+        curve = findViewById(R.id.curve2);
         taplayout = findViewById(R.id.layouttap2);
 
         initanimation();
@@ -40,12 +40,12 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
                     case 0:
                         curve.startAnimation(circleAnimation);
                         cancel = false;
-                      //  Toast.makeText(MainActivity.this, "start", Toast.LENGTH_SHORT).show();
+                        //  Toast.makeText(MainActivity.this, "start", Toast.LENGTH_SHORT).show();
                         return true;
                     case 1:
                     case 3:
 
-             //   Toast.makeText(MainActivity.this, "SuccessFull", Toast.LENGTH_SHORT).show();
+                        //   Toast.makeText(MainActivity.this, "SuccessFull", Toast.LENGTH_SHORT).show();
                         circleAnimation.cancel();
                         cancel = true;
                         return true;
@@ -58,18 +58,18 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
 
     @Override
     public void onAnimationStart(Animation animation) {
-        Log.d("anim","Animation started");
+        Log.d("anim", "Animation started");
 
     }
 
     @Override
     public void onAnimationEnd(Animation animation) {
-        if (cancel){
-            Log.d("anim","Incomplete");
+        if (cancel) {
+            Log.d("anim", "Incomplete");
 
-        }else {
+        } else {
             Toast.makeText(MainActivity.this, "SuccessFull", Toast.LENGTH_SHORT).show();
-            Log.d("anim","Complete");
+            Log.d("anim", "Complete");
 
         }
     }
@@ -78,4 +78,11 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
     public void onAnimationRepeat(Animation animation) {
 
     }
+
+
+    /*
+    01567942370   Pass: 12345678     company
+    01630179187  Pass: 12345678   user
+    01767078111 Pass : 12345678 Fireman
+     */
 }

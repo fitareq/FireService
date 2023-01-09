@@ -976,9 +976,11 @@ public class UserMapsActivity extends AppCompatActivity implements
                                         id = item.getId();
                                     }
                                 }
-                                if (id.equals("-001"))
+                                addComment(id, comment, color, floor, longitude, latitude);
+                                bottomSheetDialog.dismiss();
+                                /*if (id.equals("-001"))
                                     Toast.makeText(UserMapsActivity.this, "Select a valid floor...", Toast.LENGTH_SHORT).show();
-                                else addComment(id, comment, color, floor);
+                                else addComment(id, comment, color, floor);*/
                             }
                         });
                         bottomSheetDialog.show();
@@ -1521,7 +1523,7 @@ public class UserMapsActivity extends AppCompatActivity implements
     }
 
     //    id floor color comment
-    private void addComment(String id, String comment, String color, String floor) {
+    private void addComment(String id, String comment, String color, String floor, double longitude, double latitude) {
         progressDialog.show();
         SharedPreferences sp = context.getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
         String accessTocken = sp.getString("access_token", "access_token found");
@@ -1539,7 +1541,7 @@ public class UserMapsActivity extends AppCompatActivity implements
 
                         Toast.makeText(context, "" + jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
                     }
-
+                    //Show_loaction_wise_Storage(longitude, latitude);
                     progressDialog.dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();
