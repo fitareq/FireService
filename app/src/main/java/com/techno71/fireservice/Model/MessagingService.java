@@ -31,30 +31,20 @@ import java.util.Map;
 
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 public class MessagingService extends FirebaseMessagingService {
-
-    NotificationManager mNotificationManager;
-
-    public final static int ALARM_ID = 12345;
-    Intent resultIntent;
-    String user_type = "";
-
-    SharedPreferences sharedPreferences_type;
-
-
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        sharedPreferences_type = getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
+       /* sharedPreferences_type = getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
 
         user_type = sharedPreferences_type.getString("user_type", "not found");
 
 
         Map<String, String> extraData = remoteMessage.getData();
-        sharedPreferences_type.edit().putFloat("latitude001", Float.parseFloat("" + extraData.get("latitude"))).commit();
-        sharedPreferences_type.edit().putFloat("longitude001", Float.parseFloat(extraData.get("longitude"))).commit();
-        sharedPreferences_type.edit().putString("img", "" + extraData.get("img")).commit();
-        sharedPreferences_type.edit().putString("imgType", "" + extraData.get("imgType")).commit();
+        sharedPreferences_type.edit().putFloat("latitude001", Float.parseFloat("" + extraData.get("latitude"))).apply();
+        sharedPreferences_type.edit().putFloat("longitude001", Float.parseFloat(extraData.get("longitude"))).apply();
+        sharedPreferences_type.edit().putString("img", "" + extraData.get("img")).apply();
+        sharedPreferences_type.edit().putString("imgType", "" + extraData.get("imgType")).apply();
 
         //Toast.makeText(this, ""+extraData.get("img"), Toast.LENGTH_SHORT).show();
 
@@ -123,21 +113,60 @@ public class MessagingService extends FirebaseMessagingService {
         }
 
 // notificationId is a unique int for each notification that you must define
-        mNotificationManager.notify(100, builder.build());
-
+        mNotificationManager.notify(100, builder.build());*/
+        notifyUser(remoteMessage);
 
     }
 
-    public void checkOverlayPermission() {
+    private void notifyUser(RemoteMessage remoteMessage) {
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
+        String userType = sharedPreferences.getString("user_type", "not found");
 
-        if (!Settings.canDrawOverlays(this)) {
-            // send user to the device settings
-            Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            startActivity(myIntent);
+        Map<String, String> extraData = remoteMessage.getData();
+        sharedPreferences.edit().putFloat("latitude001", Float.parseFloat("" + extraData.get("latitude"))).apply();
+        sharedPreferences.edit().putFloat("longitude001", Float.parseFloat("" + extraData.get("longitude"))).apply();
+        sharedPreferences.edit().putString("img", "" + extraData.get("img")).apply();
+        sharedPreferences.edit().putString("imgType", "" + extraData.get("imgType")).apply();
+
+
+        // vibration
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        long[] pattern = {100, 300, 300, 300};
+        v.vibrate(pattern, -1);
+        //sound
+        Sound.playSound(this);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+        Intent intent;
+        if (userType.contains("1")) {
+            intent = new Intent(this, FireMapActivity.class);
         } else {
-            Window window = new Window(this);
-            window.open();
+            intent = new Intent(this, UserMapActivity.class);
         }
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_MUTABLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = "Your_channel_id";
+            NotificationChannel channel = new NotificationChannel(channelId, "FireService Notification", NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "CHANNEL_ID")
+                .setSmallIcon(R.drawable.ic_baseline_notifications_24)
+                .setAutoCancel(true)
+                .setContentTitle(remoteMessage.getData().get("title"))
+                .setContentText(remoteMessage.getData().get("text"))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText("body"))
+                .setContentIntent(pendingIntent)
+                .setPriority(Notification.PRIORITY_MAX);
+
+        notificationManager.notify(100, notificationBuilder.build());
+
     }
 
+    @Override
+    public void onNewToken(@NonNull String token) {
+        super.onNewToken(token);
+    }
 }
