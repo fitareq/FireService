@@ -31,6 +31,9 @@ import java.util.Map;
 
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 public class MessagingService extends FirebaseMessagingService {
+
+    private final String channelId = "100";
+
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -119,6 +122,7 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
     private void notifyUser(RemoteMessage remoteMessage) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
         String userType = sharedPreferences.getString("user_type", "not found");
 
@@ -129,39 +133,35 @@ public class MessagingService extends FirebaseMessagingService {
         sharedPreferences.edit().putString("imgType", "" + extraData.get("imgType")).apply();
 
 
-        // vibration
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        long[] pattern = {100, 300, 300, 300};
-        v.vibrate(pattern, -1);
-        //sound
-        Sound.playSound(this);
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-
         Intent intent;
         if (userType.contains("1")) {
             intent = new Intent(this, FireMapActivity.class);
         } else {
             intent = new Intent(this, UserMapActivity.class);
         }
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_IMMUTABLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelId = "Your_channel_id";
             NotificationChannel channel = new NotificationChannel(channelId, "FireService Notification", NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
         }
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "CHANNEL_ID")
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "Your_channel_id")
                 .setSmallIcon(R.drawable.ic_baseline_notifications_24)
                 .setAutoCancel(true)
-                .setContentTitle(remoteMessage.getData().get("title"))
-                .setContentText(remoteMessage.getData().get("text"))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText("body"))
+                .setContentTitle(extraData.get("title"))
+                .setContentText(extraData.get("body"))
                 .setContentIntent(pendingIntent)
                 .setPriority(Notification.PRIORITY_MAX);
 
-        notificationManager.notify(100, notificationBuilder.build());
+        // vibration
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        long[] pattern = {100, 100, 100};
+        v.vibrate(pattern, -1);
+        //sound
+        Sound.playSound(this);
+
+        notificationManager.notify(Integer.parseInt(channelId), notificationBuilder.build());
 
     }
 

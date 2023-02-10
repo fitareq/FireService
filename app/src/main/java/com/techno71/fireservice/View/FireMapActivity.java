@@ -513,6 +513,8 @@ public class FireMapActivity extends FragmentActivity implements
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
 
+        getLocationMap();
+
         mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(@NonNull Location location) {
@@ -532,7 +534,7 @@ public class FireMapActivity extends FragmentActivity implements
                     sharedPreferences_type.edit().putString("myLongitude", String.valueOf(location.getLongitude())).commit();
                     mMap.addMarker(new MarkerOptions().position(myLocationLat).title("Current Location")
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));
 
                     /*MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(myLocationLat);
@@ -543,7 +545,7 @@ public class FireMapActivity extends FragmentActivity implements
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));*/
                     currentLocationMarker = true;
                 }
-                getLocationMap();
+//                getLocationMap();
 
             }
         });
@@ -569,18 +571,18 @@ public class FireMapActivity extends FragmentActivity implements
     @SuppressLint("DefaultLocale")
     private void getLocationMap() {
 
-        if (myLocationLat != null) {
+//        if (myLocationLat != null) {
             if (userLocationLat != null) {
 
-                distance = SphericalUtil.computeDistanceBetween(myLocationLat, userLocationLat);
+                //distance = SphericalUtil.computeDistanceBetween(myLocationLat, userLocationLat);
 
-                /*if (isActivityStart) {
-                    isActivityStart = false;
-                    //mMap.addMarker(new MarkerOptions().position(myLocationLat).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));
-                   // mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocationLat));
-                   // mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
-                }*/
+//                if (isActivityStart) {
+//                    isActivityStart = false;
+//                    //mMap.addMarker(new MarkerOptions().position(myLocationLat).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocationLat, 18));
+//                   // mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocationLat));
+//                   // mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
+//                }
                 mMap.setMinZoomPreference(6.0f);
                 mMap.setMaxZoomPreference(20.0f);
 
@@ -604,6 +606,7 @@ public class FireMapActivity extends FragmentActivity implements
                                                     // update UI here
                                                     mMap.clear();
                                                     mMap.addMarker(new MarkerOptions().position(userLocationLat).icon(BitmapDescriptorFactory.fromResource(icons_fire_list[current_icon])));
+                                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocationLat, 18));
                                                     showOtherIconsRepeatedly();
                                                 }
                                             });
@@ -628,6 +631,7 @@ public class FireMapActivity extends FragmentActivity implements
                                                     // update UI here
                                                     mMap.clear();
                                                     mMap.addMarker(new MarkerOptions().position(userLocationLat).icon(BitmapDescriptorFactory.fromResource(icons_ship_burn_list[current_icon])));
+                                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocationLat, 18));
                                                     showOtherIconsRepeatedly();
                                                 }
                                             });
@@ -654,6 +658,7 @@ public class FireMapActivity extends FragmentActivity implements
                                                     // update UI here
                                                     mMap.clear();
                                                     mMap.addMarker(new MarkerOptions().position(userLocationLat).icon(BitmapDescriptorFactory.fromResource(icons_car_burn_list[current_icon])));
+                                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocationLat, 18));
                                                     showOtherIconsRepeatedly();
                                                 }
                                             });
@@ -678,6 +683,7 @@ public class FireMapActivity extends FragmentActivity implements
                                                     // update UI here
                                                     mMap.clear();
                                                     mMap.addMarker(new MarkerOptions().position(userLocationLat).icon(BitmapDescriptorFactory.fromResource(icons_building_burn_list[current_icon])));
+                                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocationLat, 18));
                                                     showOtherIconsRepeatedly();
                                                 }
                                             });
@@ -703,6 +709,7 @@ public class FireMapActivity extends FragmentActivity implements
                                                     // update UI here
                                                     mMap.clear();
                                                     mMap.addMarker(new MarkerOptions().position(userLocationLat).icon(BitmapDescriptorFactory.fromResource(icons_siron_list[current_icon])));
+                                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocationLat, 18));
                                                     showOtherIconsRepeatedly();
                                                 }
                                             });
@@ -748,9 +755,9 @@ public class FireMapActivity extends FragmentActivity implements
                         //.alternativeRoute(true)
                         .execute(this);
 
-
+//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocationLat, 12));
             }
-        }
+//        }
 
     }
 
@@ -759,8 +766,8 @@ public class FireMapActivity extends FragmentActivity implements
     @SuppressLint("SetTextI18n")
     @Override
     public void onDirectionSuccess(@Nullable Direction direction) {
-        assert direction != null;
-        if (direction.isOK()) {
+//        assert direction != null;
+        if (direction != null && direction.isOK()) {
             MarkerOptions markerOptions1 = new MarkerOptions();
             markerOptions1.position(userLocationLat);
             markerOptions1.title("User Position");
@@ -1165,7 +1172,7 @@ public class FireMapActivity extends FragmentActivity implements
 
                 Map<String, String> hashMap = new HashMap<String, String>();
                 hashMap.put("security_error", "tec71");
-                hashMap.put("axcess_token",   access_token);
+                hashMap.put("axcess_token", access_token);
                 hashMap.put("latitude", "" + latitude);
                 hashMap.put("longtude", "" + longtitude);
 

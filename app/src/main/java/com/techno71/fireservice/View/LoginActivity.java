@@ -17,6 +17,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -92,6 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(String s) {
                         Devise_token = ""+s;
+                        Log.v("firebasetoken", s);
                     }
                 });
 

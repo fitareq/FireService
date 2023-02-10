@@ -11,6 +11,9 @@ import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 public class MainActivity extends AppCompatActivity implements Animation.AnimationListener {
     public Circle curve;
     LinearLayout taplayout;

@@ -1506,13 +1506,13 @@ public class CompanyMapsActivity extends AppCompatActivity
                             } else if (TextUtils.isEmpty(comment)) {
                                 commentEt.setError("Enter a comment...");
                             } else {
-                                String id = "-001";
+                                /*String id = "-001";
                                 for (LocationWithStorageShow item : locationWithStorageShowList) {
                                     if (floor.equalsIgnoreCase(item.getFloor())) {
                                         id = item.getId();
                                     }
-                                }
-                                addComment(id, comment, color, floor);
+                                }*/
+                                addComment(l_id, comment, color, floor, longitude, latitude);
                                 /*if (id.equals("-001"))
                                     Toast.makeText(CompanyMapsActivity.this, "Select a valid floor...", Toast.LENGTH_SHORT).show();
                                 else addComment(id, comment, color, floor);*/
@@ -1556,7 +1556,7 @@ public class CompanyMapsActivity extends AppCompatActivity
 
     }
 
-    private void addComment(String id, String comment, String color, String floor) {
+    private void addComment(String id, String comment, String color, String floor, double longitude, double latitude) {
         progressDialog.show();
         SharedPreferences sp = context.getApplicationContext().getSharedPreferences("com.techno71.fireservice", Context.MODE_PRIVATE);
         String accessTocken = sp.getString("access_token", "access_token found");
@@ -1574,6 +1574,7 @@ public class CompanyMapsActivity extends AppCompatActivity
 
                         Toast.makeText(context, "" + jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
                     }
+                    Show_loaction_wise_Storage(latitude, longitude);
                     progressDialog.dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();

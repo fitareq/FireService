@@ -867,7 +867,13 @@ public class UserMapsActivity extends AppCompatActivity implements
 
     private void Show_loaction_wise_Storage(double latitude, double longitude) {
         progressDialog.show();
+
         String access_token = sharedPreferences_type.getString("access_token", "default_access_token001");
+
+        /*String access_token = "N1DVdP74Z54K3J4H08TjckNAuSrmI1AsMlr4SxpszQvY9OrQB65Monday19thofDecember202206:50:23";
+        double lat = 23.72283235819987;
+        double lon = 90.40756660603458;*/
+
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         LayoutInflater layoutInflater1 = getLayoutInflater();
         View view1 = layoutInflater1.inflate(R.layout.user_location_storag_show, null);
@@ -970,13 +976,13 @@ public class UserMapsActivity extends AppCompatActivity implements
                             } else if (TextUtils.isEmpty(comment)) {
                                 commentEt.setError("Enter a comment...");
                             } else {
-                                String id = "-001";
+                                /*String id = "-001";
                                 for (LocationWithStorageShow item : locationWithStorageShowList) {
                                     if (floor.equalsIgnoreCase(item.getFloor())) {
                                         id = item.getId();
                                     }
-                                }
-                                addComment(id, comment, color, floor, longitude, latitude);
+                                }*/
+                                addComment(l_id, comment, color, floor, longitude, latitude);
                                 bottomSheetDialog.dismiss();
                                 /*if (id.equals("-001"))
                                     Toast.makeText(UserMapsActivity.this, "Select a valid floor...", Toast.LENGTH_SHORT).show();
@@ -1188,13 +1194,8 @@ public class UserMapsActivity extends AppCompatActivity implements
                                 .build();
                         mDialog.show();
 
-                        Toast.makeText(UserMapsActivity.this, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
-
-                    } else {
-
-                        Toast.makeText(UserMapsActivity.this, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
-
                     }
+                    Toast.makeText(UserMapsActivity.this, jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1541,7 +1542,7 @@ public class UserMapsActivity extends AppCompatActivity implements
 
                         Toast.makeText(context, "" + jsonObjectMain.getString("message"), Toast.LENGTH_LONG).show();
                     }
-                    //Show_loaction_wise_Storage(longitude, latitude);
+                    Show_loaction_wise_Storage(latitude, longitude);
                     progressDialog.dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();
