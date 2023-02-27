@@ -536,16 +536,16 @@ public class FireMapActivity extends FragmentActivity implements
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
                     //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));
 
-                    /*MarkerOptions markerOptions = new MarkerOptions();
+                    MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(myLocationLat);
                     markerOptions.title("Current Location");
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
 
                     mMap.addMarker(markerOptions);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));*/
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationLat, 18));
                     currentLocationMarker = true;
                 }
-//                getLocationMap();
+                getLocationMap();
 
             }
         });
@@ -1148,7 +1148,7 @@ public class FireMapActivity extends FragmentActivity implements
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                pDialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Flat Not Found", Toast.LENGTH_SHORT).show();
 
                 //   Toast.makeText(FireMapActivity.this, ""+error, Toast.LENGTH_SHORT).show();
